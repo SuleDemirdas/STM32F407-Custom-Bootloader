@@ -21,6 +21,7 @@ Release/
 *.o
 *.d
 *.su
+*.xmi
 .settings/
 .project
 .cproject
