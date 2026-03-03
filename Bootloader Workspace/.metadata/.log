@@ -453,3 +453,45 @@ org.eclipse.core.runtime.CoreException: attempt to set description for a project
 	at org.eclipse.equinox.launcher.Main.run(Main.java:1481)
 !SUBENTRY 1 org.eclipse.cdt.core 4 -1 2026-03-04 01:10:17.961
 !MESSAGE attempt to set description for a project which does not exist or not open
+
+!ENTRY com.st.stm32cube.ide.mcu.debug.swv 1 1 2026-03-04 01:37:53.925
+!MESSAGE SWV configuration; base: 36000000; minDiv: 18; maxDiv: 65535; maxSWO: 2000000; limit: 2000000 => SWO: 2000000; CPU: 50000000; div: 25
+
+!ENTRY com.st.stm32cube.ide.mcu.debug.swv 1 1 2026-03-04 01:38:35.417
+!MESSAGE SWV configuration; base: 36000000; minDiv: 18; maxDiv: 65535; maxSWO: 2000000; limit: 2000000 => SWO: 2000000; CPU: 50000000; div: 25
+
+!ENTRY com.st.stm32cube.ide.mcu.debug.swv 1 1 2026-03-04 01:39:17.509
+!MESSAGE SWV configuration; base: 36000000; minDiv: 18; maxDiv: 65535; maxSWO: 2000000; limit: 2000000 => SWO: 2000000; CPU: 50000000; div: 25
+
+!ENTRY com.st.stm32cube.ide.mcu.debug.swv 1 1 2026-03-04 01:40:03.530
+!MESSAGE SWV configuration; base: 36000000; minDiv: 18; maxDiv: 65535; maxSWO: 2000000; limit: 2000000 => SWO: 2000000; CPU: 50000000; div: 25
+
+!ENTRY com.st.stm32cube.ide.mcu.debug.swv 1 1 2026-03-04 01:42:35.302
+!MESSAGE SWV configuration; base: 36000000; minDiv: 18; maxDiv: 65535; maxSWO: 2000000; limit: 2000000 => SWO: 2000000; CPU: 50000000; div: 25
+
+!ENTRY com.st.stm32cube.ide.mcu.debug.swv 1 1 2026-03-04 01:47:27.640
+!MESSAGE SWV configuration; base: 36000000; minDiv: 18; maxDiv: 65535; maxSWO: 2000000; limit: 2000000 => SWO: 2000000; CPU: 50000000; div: 25
+
+!ENTRY com.st.stm32cube.ide.mcu.debug.swv 1 1 2026-03-04 01:47:40.461
+!MESSAGE SWV configuration; base: 36000000; minDiv: 18; maxDiv: 65535; maxSWO: 2000000; limit: 2000000 => SWO: 2000000; CPU: 50000000; div: 25
+
+!ENTRY com.st.stm32cube.ide.mcu.debug 4 0 2026-03-04 01:47:41.353
+!MESSAGE Error - No active DSF-Session. tmpSessionId = 8 (contextManager row 121)
+
+!ENTRY com.st.stm32cube.ide.mcu.debug 4 0 2026-03-04 01:47:41.354
+!MESSAGE Existing sessions are:
+
+!ENTRY com.st.stm32cube.ide.mcu.debug 4 0 2026-03-04 01:47:41.355
+!MESSAGE Error - No active DSF-Session. tmpSessionId = 8 (contextManager row 121)
+
+!ENTRY com.st.stm32cube.ide.mcu.debug 4 0 2026-03-04 01:47:41.355
+!MESSAGE Existing sessions are:
+
+!ENTRY com.st.stm32cube.ide.mcu.debug.swv 1 1 2026-03-04 01:48:13.880
+!MESSAGE SWV configuration; base: 36000000; minDiv: 18; maxDiv: 65535; maxSWO: 2000000; limit: 2000000 => SWO: 2000000; CPU: 50000000; div: 25
+
+!ENTRY com.st.stm32cube.ide.mcu.debug.swv 1 1 2026-03-04 01:51:27.300
+!MESSAGE SWV configuration; base: 36000000; minDiv: 18; maxDiv: 65535; maxSWO: 2000000; limit: 2000000 => SWO: 2000000; CPU: 50000000; div: 25
+
+!ENTRY com.st.stm32cube.ide.mcu.debug.swv 1 1 2026-03-04 01:53:45.391
+!MESSAGE SWV configuration; base: 36000000; minDiv: 18; maxDiv: 65535; maxSWO: 2000000; limit: 2000000 => SWO: 2000000; CPU: 50000000; div: 25

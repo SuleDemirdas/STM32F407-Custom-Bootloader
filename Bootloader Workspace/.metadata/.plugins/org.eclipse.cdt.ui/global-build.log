@@ -53,3 +53,201 @@ Finished building: default.size.stdout
  
 Finished building: F4_Bootloader.list
  
+01:28:20 **** Incremental Build of configuration Debug for project F4_Bootloader ****
+make -j12 all 
+arm-none-eabi-gcc "../Core/Src/main.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32F407xx -c -I../Core/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I../Drivers/CMSIS/Include -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"Core/Src/main.d" -MT"Core/Src/main.o" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "Core/Src/main.o"
+../Core/Src/main.c: In function 'main':
+../Core/Src/main.c:111:45: warning: pointer targets in passing argument 2 of 'HAL_UART_Transmit' differ in signedness [-Wpointer-sign]
+  111 |                  HAL_UART_Transmit(&huart2, "Jumping to Application...\n\r", 27, HAL_MAX_DELAY);
+      |                                             ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      |                                             |
+      |                                             char *
+In file included from ../Core/Inc/stm32f4xx_hal_conf.h:411,
+                 from ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h:29,
+                 from ../Core/Inc/main.h:30,
+                 from ../Core/Src/main.c:20:
+../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_uart.h:745:79: note: expected 'const uint8_t *' {aka 'const unsigned char *'} but argument is of type 'char *'
+  745 | HAL_StatusTypeDef HAL_UART_Transmit(UART_HandleTypeDef *huart, const uint8_t *pData, uint16_t Size, uint32_t Timeout);
+      |                                                                ~~~~~~~~~~~~~~~^~~~~
+arm-none-eabi-gcc -o "F4_Bootloader.elf" @"objects.list"   -mcpu=cortex-m4 -T"C:\Users\sulenurdemirdas\Desktop\ders\Bootloader Course\Bootloader Workspace\F4_Bootloader\STM32F407VGTX_FLASH.ld" --specs=nosys.specs -Wl,-Map="F4_Bootloader.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
+Finished building target: F4_Bootloader.elf
+ 
+arm-none-eabi-size  F4_Bootloader.elf 
+arm-none-eabi-objdump -h -S F4_Bootloader.elf  > "F4_Bootloader.list"
+   text	   data	    bss	    dec	    hex	filename
+  10948	     12	   1644	  12604	   313c	F4_Bootloader.elf
+Finished building: default.size.stdout
+ 
+Finished building: F4_Bootloader.list
+ 
+01:31:36 **** Incremental Build of configuration Debug for project F4_Bootloader ****
+make -j12 all 
+arm-none-eabi-gcc "../Core/Src/main.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32F407xx -c -I../Core/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I../Drivers/CMSIS/Include -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"Core/Src/main.d" -MT"Core/Src/main.o" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "Core/Src/main.o"
+arm-none-eabi-gcc -o "F4_Bootloader.elf" @"objects.list"   -mcpu=cortex-m4 -T"C:\Users\sulenurdemirdas\Desktop\ders\Bootloader Course\Bootloader Workspace\F4_Bootloader\STM32F407VGTX_FLASH.ld" --specs=nosys.specs -Wl,-Map="F4_Bootloader.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
+Finished building target: F4_Bootloader.elf
+ 
+arm-none-eabi-size  F4_Bootloader.elf 
+arm-none-eabi-objdump -h -S F4_Bootloader.elf  > "F4_Bootloader.list"
+   text	   data	    bss	    dec	    hex	filename
+  10940	     40	   1640	  12620	   314c	F4_Bootloader.elf
+Finished building: default.size.stdout
+ 
+Finished building: F4_Bootloader.list
+ 
+01:32:49 **** Incremental Build of configuration Debug for project F4_Bootloader ****
+make -j12 all 
+arm-none-eabi-gcc "../Core/Src/main.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32F407xx -c -I../Core/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I../Drivers/CMSIS/Include -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"Core/Src/main.d" -MT"Core/Src/main.o" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "Core/Src/main.o"
+../Core/Src/main.c: In function 'main':
+../Core/Src/main.c:119:25: warning: pointer targets in passing argument 1 of 'printf' differ in signedness [-Wpointer-sign]
+  119 |                  printf(message);
+      |                         ^~~~~~~
+      |                         |
+      |                         uint8_t * {aka unsigned char *}
+In file included from ../Core/Src/main.c:24:
+C:\ST\STM32CubeIDE_1.17.0\STM32CubeIDE\plugins\com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.13.3.rel1.win32_1.0.0.202411081344\tools\bin/../lib/gcc/arm-none-eabi/13.3.1/../../../../arm-none-eabi/include/stdio.h:206:17: note: expected 'const char * restrict' but argument is of type 'uint8_t *' {aka 'unsigned char *'}
+  206 | int     printf (const char *__restrict, ...)
+      |                 ^
+arm-none-eabi-gcc -o "F4_Bootloader.elf" @"objects.list"   -mcpu=cortex-m4 -T"C:\Users\sulenurdemirdas\Desktop\ders\Bootloader Course\Bootloader Workspace\F4_Bootloader\STM32F407VGTX_FLASH.ld" --specs=nosys.specs -Wl,-Map="F4_Bootloader.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
+Finished building target: F4_Bootloader.elf
+ 
+arm-none-eabi-size  F4_Bootloader.elf 
+arm-none-eabi-objdump -h -S F4_Bootloader.elf  > "F4_Bootloader.list"
+   text	   data	    bss	    dec	    hex	filename
+  15072	    132	   1980	  17184	   4320	F4_Bootloader.elf
+Finished building: default.size.stdout
+ 
+Finished building: F4_Bootloader.list
+ 
+01:36:16 **** Incremental Build of configuration Debug for project F4_Bootloader ****
+make -j12 all 
+arm-none-eabi-gcc "../Core/Src/main.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32F407xx -c -I../Core/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I../Drivers/CMSIS/Include -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"Core/Src/main.d" -MT"Core/Src/main.o" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "Core/Src/main.o"
+arm-none-eabi-gcc -o "F4_Bootloader.elf" @"objects.list"   -mcpu=cortex-m4 -T"C:\Users\sulenurdemirdas\Desktop\ders\Bootloader Course\Bootloader Workspace\F4_Bootloader\STM32F407VGTX_FLASH.ld" --specs=nosys.specs -Wl,-Map="F4_Bootloader.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
+Finished building target: F4_Bootloader.elf
+ 
+arm-none-eabi-size  F4_Bootloader.elf 
+arm-none-eabi-objdump -h -S F4_Bootloader.elf  > "F4_Bootloader.list"
+   text	   data	    bss	    dec	    hex	filename
+  15084	    132	   1980	  17196	   432c	F4_Bootloader.elf
+Finished building: default.size.stdout
+ 
+Finished building: F4_Bootloader.list
+ 
+01:37:46 **** Incremental Build of configuration Debug for project F4_Bootloader ****
+make -j12 all 
+arm-none-eabi-size  F4_Bootloader.elf 
+   text	   data	    bss	    dec	    hex	filename
+  15084	    132	   1980	  17196	   432c	F4_Bootloader.elf
+Finished building: default.size.stdout
+ 
+01:38:28 **** Incremental Build of configuration Debug for project F4_Bootloader ****
+make -j12 all 
+arm-none-eabi-size  F4_Bootloader.elf 
+   text	   data	    bss	    dec	    hex	filename
+  15084	    132	   1980	  17196	   432c	F4_Bootloader.elf
+Finished building: default.size.stdout
+ 
+01:39:05 **** Incremental Build of configuration Debug for project F4_Bootloader ****
+make -j12 all 
+arm-none-eabi-size  F4_Bootloader.elf 
+   text	   data	    bss	    dec	    hex	filename
+  15084	    132	   1980	  17196	   432c	F4_Bootloader.elf
+Finished building: default.size.stdout
+ 
+01:39:10 **** Incremental Build of configuration Debug for project F4_Bootloader ****
+make -j12 all 
+arm-none-eabi-size  F4_Bootloader.elf 
+   text	   data	    bss	    dec	    hex	filename
+  15084	    132	   1980	  17196	   432c	F4_Bootloader.elf
+Finished building: default.size.stdout
+ 
+01:39:51 **** Incremental Build of configuration Debug for project F4_Bootloader ****
+make -j12 all 
+arm-none-eabi-gcc "../Core/Src/main.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32F407xx -c -I../Core/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I../Drivers/CMSIS/Include -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"Core/Src/main.d" -MT"Core/Src/main.o" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "Core/Src/main.o"
+arm-none-eabi-gcc -o "F4_Bootloader.elf" @"objects.list"   -mcpu=cortex-m4 -T"C:\Users\sulenurdemirdas\Desktop\ders\Bootloader Course\Bootloader Workspace\F4_Bootloader\STM32F407VGTX_FLASH.ld" --specs=nosys.specs -Wl,-Map="F4_Bootloader.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
+Finished building target: F4_Bootloader.elf
+ 
+arm-none-eabi-size  F4_Bootloader.elf 
+arm-none-eabi-objdump -h -S F4_Bootloader.elf  > "F4_Bootloader.list"
+   text	   data	    bss	    dec	    hex	filename
+  15084	    132	   1980	  17196	   432c	F4_Bootloader.elf
+Finished building: default.size.stdout
+ 
+Finished building: F4_Bootloader.list
+ 
+01:39:56 **** Incremental Build of configuration Debug for project F4_Bootloader ****
+make -j12 all 
+arm-none-eabi-size  F4_Bootloader.elf 
+   text	   data	    bss	    dec	    hex	filename
+  15084	    132	   1980	  17196	   432c	F4_Bootloader.elf
+Finished building: default.size.stdout
+ 
+01:42:28 **** Incremental Build of configuration Debug for project F4_Bootloader ****
+make -j12 all 
+arm-none-eabi-size  F4_Bootloader.elf 
+   text	   data	    bss	    dec	    hex	filename
+  15084	    132	   1980	  17196	   432c	F4_Bootloader.elf
+Finished building: default.size.stdout
+ 
+01:47:14 **** Incremental Build of configuration Debug for project F4_Bootloader ****
+make -j12 all 
+arm-none-eabi-gcc "../Core/Src/main.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32F407xx -c -I../Core/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I../Drivers/CMSIS/Include -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"Core/Src/main.d" -MT"Core/Src/main.o" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "Core/Src/main.o"
+arm-none-eabi-gcc -o "F4_Bootloader.elf" @"objects.list"   -mcpu=cortex-m4 -T"C:\Users\sulenurdemirdas\Desktop\ders\Bootloader Course\Bootloader Workspace\F4_Bootloader\STM32F407VGTX_FLASH.ld" --specs=nosys.specs -Wl,-Map="F4_Bootloader.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
+Finished building target: F4_Bootloader.elf
+ 
+arm-none-eabi-size  F4_Bootloader.elf 
+arm-none-eabi-objdump -h -S F4_Bootloader.elf  > "F4_Bootloader.list"
+   text	   data	    bss	    dec	    hex	filename
+  15084	    132	   1980	  17196	   432c	F4_Bootloader.elf
+Finished building: default.size.stdout
+ 
+Finished building: F4_Bootloader.list
+ 
+01:47:20 **** Incremental Build of configuration Debug for project F4_Bootloader ****
+make -j12 all 
+arm-none-eabi-size  F4_Bootloader.elf 
+   text	   data	    bss	    dec	    hex	filename
+  15084	    132	   1980	  17196	   432c	F4_Bootloader.elf
+Finished building: default.size.stdout
+ 
+01:47:33 **** Incremental Build of configuration Debug for project F4_Bootloader ****
+make -j12 all 
+arm-none-eabi-size  F4_Bootloader.elf 
+   text	   data	    bss	    dec	    hex	filename
+  15084	    132	   1980	  17196	   432c	F4_Bootloader.elf
+Finished building: default.size.stdout
+ 
+01:48:06 **** Incremental Build of configuration Debug for project F4_Bootloader ****
+make -j12 all 
+arm-none-eabi-size  F4_Bootloader.elf 
+   text	   data	    bss	    dec	    hex	filename
+  15084	    132	   1980	  17196	   432c	F4_Bootloader.elf
+Finished building: default.size.stdout
+ 
+01:51:08 **** Incremental Build of configuration Debug for project F4_Bootloader ****
+make -j12 all 
+arm-none-eabi-gcc "../Core/Src/main.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32F407xx -c -I../Core/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I../Drivers/CMSIS/Include -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"Core/Src/main.d" -MT"Core/Src/main.o" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "Core/Src/main.o"
+arm-none-eabi-gcc -o "F4_Bootloader.elf" @"objects.list"   -mcpu=cortex-m4 -T"C:\Users\sulenurdemirdas\Desktop\ders\Bootloader Course\Bootloader Workspace\F4_Bootloader\STM32F407VGTX_FLASH.ld" --specs=nosys.specs -Wl,-Map="F4_Bootloader.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
+Finished building target: F4_Bootloader.elf
+ 
+arm-none-eabi-size  F4_Bootloader.elf 
+arm-none-eabi-objdump -h -S F4_Bootloader.elf  > "F4_Bootloader.list"
+   text	   data	    bss	    dec	    hex	filename
+  15164	    132	   1980	  17276	   437c	F4_Bootloader.elf
+Finished building: default.size.stdout
+ 
+Finished building: F4_Bootloader.list
+ 
+01:51:20 **** Incremental Build of configuration Debug for project F4_Bootloader ****
+make -j12 all 
+arm-none-eabi-size  F4_Bootloader.elf 
+   text	   data	    bss	    dec	    hex	filename
+  15164	    132	   1980	  17276	   437c	F4_Bootloader.elf
+Finished building: default.size.stdout
+ 
+01:53:38 **** Incremental Build of configuration Debug for project F4_Bootloader ****
+make -j12 all 
+arm-none-eabi-size  F4_Bootloader.elf 
+   text	   data	    bss	    dec	    hex	filename
+  15164	    132	   1980	  17276	   437c	F4_Bootloader.elf
+Finished building: default.size.stdout
+ 

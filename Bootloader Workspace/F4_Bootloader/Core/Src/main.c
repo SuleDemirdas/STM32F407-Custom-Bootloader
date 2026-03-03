@@ -21,7 +21,8 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-
+#include "stdio.h"
+#include "stdint.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -31,7 +32,8 @@
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
-
+#define MESSAGE_SIZE	27
+#define PRINT_DEBUG
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -43,7 +45,7 @@
 UART_HandleTypeDef huart2;
 
 /* USER CODE BEGIN PV */
-
+uint8_t message[MESSAGE_SIZE] = "Jumping to Application...\n\r";
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -51,12 +53,13 @@ void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
 static void MX_USART2_UART_Init(void);
 /* USER CODE BEGIN PFP */
-int write(int file, char *ptr, int len);
+int _write(int file, char *ptr, int len);
+void JumpToApplication(void);
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
-int write(int file, char *ptr, int len)
+int _write(int file, char *ptr, int len)
 {
 	int i = 0;
 	for(i = 0; i < len; i++ )
@@ -64,6 +67,11 @@ int write(int file, char *ptr, int len)
 		ITM_SendChar((*ptr++));
 	}
 	return len;
+}
+
+void JumpToApplication(void)
+{
+
 }
 /* USER CODE END 0 */
 
@@ -108,6 +116,14 @@ int main(void)
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
+	  if(HAL_GPIO_ReadPin(BUTTON_GPIO_Port, BUTTON_Pin))
+	  {
+		  HAL_UART_Transmit(&huart2, message, MESSAGE_SIZE, HAL_MAX_DELAY);
+#ifdef PRINT_DEBUG
+		  printf("%s",message);
+#endif
+		  JumpToApplication();
+	  }
   }
   /* USER CODE END 3 */
 }
@@ -213,7 +229,7 @@ static void MX_GPIO_Init(void)
   /*Configure GPIO pin : BUTTON_Pin */
   GPIO_InitStruct.Pin = BUTTON_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
-  GPIO_InitStruct.Pull = GPIO_PULLUP;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
   HAL_GPIO_Init(BUTTON_GPIO_Port, &GPIO_InitStruct);
 
   /*Configure GPIO pin : LED_Pin */
