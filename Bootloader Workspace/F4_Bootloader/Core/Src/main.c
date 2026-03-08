@@ -74,19 +74,23 @@ int _write(int file, char *ptr, int len)
 
 void JumpToApplication(void)
 {
+	// deinitilize peripherals
 	HAL_GPIO_DeInit(LED_GPIO_Port, LED_Pin);
 	HAL_GPIO_DeInit(BUTTON_GPIO_Port, BUTTON_Pin);
+	HAL_UART_DeInit(&huart2);
 
-	__HAL_RCC_GPIOA_CLK_DISABLE(); // BUTTON GPIO
-	__HAL_RCC_GPIOD_CLK_DISABLE(); // LED GPIO
-	__HAL_RCC_USART2_CLK_DISABLE();
-
+	// En kritik satir, bu satir olmadan jump islemi gerceklesemez
 	HAL_RCC_DeInit();
+
 	HAL_DeInit();
+
+	// 1 ms de bir tetiklenen systick 0'lanmasa bile jump islemi gerceklesir. Ancak sans eseri jump gerceklesirken tick gelirse
+	//o zaman HardFaulta düsersin. (SysTick HAL tarafından kullanılır.)
 	SysTick->CTRL = 0;
 	SysTick->LOAD = 0;
 	SysTick->VAL = 0;
 
+	// jump islemi
     __set_MSP(APP_STACK_POINTER);
     void (*AppResetHandler)(void) ;
 
