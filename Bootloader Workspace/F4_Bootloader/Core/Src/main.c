@@ -33,7 +33,9 @@
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
 #define MESSAGE_SIZE	27
-#define PRINT_DEBUG
+#define APP_START_ADDRESS 	0x08008000UL
+#define APP_STACK_POINTER   *(__IO uint32_t*) APP_START_ADDRESS
+#define APP_RESET_HANDLER	*(__IO uint32_t*) (APP_START_ADDRESS + 4)
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -69,10 +71,29 @@ int _write(int file, char *ptr, int len)
 	return len;
 }
 
+
 void JumpToApplication(void)
 {
+	HAL_GPIO_DeInit(LED_GPIO_Port, LED_Pin);
+	HAL_GPIO_DeInit(BUTTON_GPIO_Port, BUTTON_Pin);
 
+	__HAL_RCC_GPIOA_CLK_DISABLE(); // BUTTON GPIO
+	__HAL_RCC_GPIOD_CLK_DISABLE(); // LED GPIO
+	__HAL_RCC_USART2_CLK_DISABLE();
+
+	HAL_RCC_DeInit();
+	HAL_DeInit();
+	SysTick->CTRL = 0;
+	SysTick->LOAD = 0;
+	SysTick->VAL = 0;
+
+    __set_MSP(APP_STACK_POINTER);
+    void (*AppResetHandler)(void) ;
+
+    AppResetHandler = (void (*)(void))APP_RESET_HANDLER;
+    AppResetHandler();
 }
+
 /* USER CODE END 0 */
 
 /**
@@ -125,6 +146,7 @@ int main(void)
 		  JumpToApplication();
 	  }
   }
+  //HAL_NVIC_SystemReset()
   /* USER CODE END 3 */
 }
 
