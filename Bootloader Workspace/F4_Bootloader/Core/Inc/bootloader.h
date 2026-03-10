@@ -1,0 +1,37 @@
+/*
+ * bootloader.h
+ *
+ *  Created on: Mar 9, 2026
+ *      Author: Şule Nur Demirdaş
+ */
+
+#ifndef INC_BOOTLOADER_H_
+#define INC_BOOTLOADER_H_
+
+#include "main.h"
+
+#define BOOTLOADER_HEADER			0x7F
+#define APPLICATION_HEADER			0x7E
+#define BOOTLOADER_VERSION			0x10
+/*COMMANDS*/
+#define GET_HELP					0x00
+#define GET_VERSION					0x01
+#define GET_ID						0x02
+#define READ_MEMORY					0x11
+#define GO_TO_ADDRESS				0x21
+#define WRITE_MEMORY				0x31
+#define ERASE						0x43
+#define WRITE_PROTECT_UNPROTECT		0x63
+#define READOUT_PROTECT_UNPROTECT 	0x82
+#define GET_CHECKSUM				0xA1
+
+#define ACK							0x79
+#define NACK						0x1F
+#define UNKNOWN						0x99
+
+void processBootloaderCommand(char* buffer);
+void handleGetVersion(void);
+
+extern int test;
+
+#endif /* INC_BOOTLOADER_H_ */

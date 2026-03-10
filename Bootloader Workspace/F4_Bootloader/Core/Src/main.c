@@ -23,6 +23,7 @@
 /* USER CODE BEGIN Includes */
 #include "stdio.h"
 #include "stdint.h"
+#include "bootloader.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -33,9 +34,12 @@
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
 #define MESSAGE_SIZE	27
+
 #define APP_START_ADDRESS 	0x08008000UL
 #define APP_STACK_POINTER   *(__IO uint32_t*) APP_START_ADDRESS
 #define APP_RESET_HANDLER	*(__IO uint32_t*) (APP_START_ADDRESS + 4)
+
+#define UART_PORT 			&huart1
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -44,16 +48,22 @@
 /* USER CODE END PM */
 
 /* Private variables ---------------------------------------------------------*/
+UART_HandleTypeDef huart1;
 UART_HandleTypeDef huart2;
 
 /* USER CODE BEGIN PV */
 uint8_t message[MESSAGE_SIZE] = "Jumping to Application...\n\r";
+uint8_t rxChar;
+uint8_t bufferIndex;
+char messageBuffer[BUFFER_SIZE];
+
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
 static void MX_USART2_UART_Init(void);
+static void MX_USART1_UART_Init(void);
 /* USER CODE BEGIN PFP */
 int _write(int file, char *ptr, int len);
 void JumpToApplication(void);
@@ -77,7 +87,7 @@ void JumpToApplication(void)
 	// deinitilize peripherals
 	HAL_GPIO_DeInit(LED_GPIO_Port, LED_Pin);
 	HAL_GPIO_DeInit(BUTTON_GPIO_Port, BUTTON_Pin);
-	HAL_UART_DeInit(&huart2);
+	HAL_UART_DeInit(UART_PORT);
 
 	// En kritik satir, bu satir olmadan jump islemi gerceklesemez
 	HAL_RCC_DeInit();
@@ -130,7 +140,10 @@ int main(void)
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
   MX_USART2_UART_Init();
+  MX_USART1_UART_Init();
   /* USER CODE BEGIN 2 */
+  //HAL_UART_Transmit(UART_PORT, message, MESSAGE_SIZE, HAL_MAX_DELAY);
+  HAL_UART_Receive_IT(UART_PORT, &rxChar, 1);
 
   /* USER CODE END 2 */
 
@@ -143,7 +156,7 @@ int main(void)
     /* USER CODE BEGIN 3 */
 	  if(HAL_GPIO_ReadPin(BUTTON_GPIO_Port, BUTTON_Pin))
 	  {
-		  HAL_UART_Transmit(&huart2, message, MESSAGE_SIZE, HAL_MAX_DELAY);
+		  HAL_UART_Transmit(UART_PORT, message, MESSAGE_SIZE, HAL_MAX_DELAY);
 #ifdef PRINT_DEBUG
 		  printf("%s",message);
 #endif
@@ -201,6 +214,39 @@ void SystemClock_Config(void)
 }
 
 /**
+  * @brief USART1 Initialization Function
+  * @param None
+  * @retval None
+  */
+static void MX_USART1_UART_Init(void)
+{
+
+  /* USER CODE BEGIN USART1_Init 0 */
+
+  /* USER CODE END USART1_Init 0 */
+
+  /* USER CODE BEGIN USART1_Init 1 */
+
+  /* USER CODE END USART1_Init 1 */
+  huart1.Instance = USART1;
+  huart1.Init.BaudRate = 115200;
+  huart1.Init.WordLength = UART_WORDLENGTH_8B;
+  huart1.Init.StopBits = UART_STOPBITS_1;
+  huart1.Init.Parity = UART_PARITY_NONE;
+  huart1.Init.Mode = UART_MODE_TX_RX;
+  huart1.Init.HwFlowCtl = UART_HWCONTROL_NONE;
+  huart1.Init.OverSampling = UART_OVERSAMPLING_16;
+  if (HAL_UART_Init(&huart1) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  /* USER CODE BEGIN USART1_Init 2 */
+
+  /* USER CODE END USART1_Init 2 */
+
+}
+
+/**
   * @brief USART2 Initialization Function
   * @param None
   * @retval None
@@ -248,6 +294,7 @@ static void MX_GPIO_Init(void)
   /* GPIO Ports Clock Enable */
   __HAL_RCC_GPIOA_CLK_ENABLE();
   __HAL_RCC_GPIOD_CLK_ENABLE();
+  __HAL_RCC_GPIOB_CLK_ENABLE();
 
   /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(LED_GPIO_Port, LED_Pin, GPIO_PIN_RESET);
@@ -271,6 +318,24 @@ static void MX_GPIO_Init(void)
 }
 
 /* USER CODE BEGIN 4 */
+void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
+{
+	if(huart == UART_PORT)
+	{
+		if(bufferIndex < BUFFER_SIZE - 1)
+		{
+			messageBuffer[bufferIndex++] = rxChar;
+			messageBuffer[bufferIndex] = '\0';
+		}
+		if(bufferIndex >= 2 && messageBuffer[bufferIndex-2] == '\r' && messageBuffer[bufferIndex-1] == '\n')
+		{
+			processBootloaderCommand(messageBuffer);
+			bufferIndex = 0;
+		}
+
+	}
+	HAL_UART_Receive_IT(huart, &rxChar, 1);
+}
 
 /* USER CODE END 4 */
 

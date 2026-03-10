@@ -46,6 +46,7 @@ extern "C" {
 
 /* Exported macro ------------------------------------------------------------*/
 /* USER CODE BEGIN EM */
+#define BUFFER_SIZE		16
 
 /* USER CODE END EM */
 
