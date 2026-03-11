@@ -25,3 +25,7 @@ Release/
 .settings/
 .project
 .cproject
+
+.vs/
+*.user
+*.suo
