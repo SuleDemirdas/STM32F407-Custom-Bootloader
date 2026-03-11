@@ -39,7 +39,6 @@
 #define APP_STACK_POINTER   *(__IO uint32_t*) APP_START_ADDRESS
 #define APP_RESET_HANDLER	*(__IO uint32_t*) (APP_START_ADDRESS + 4)
 
-#define UART_PORT 			&huart1
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -67,6 +66,7 @@ static void MX_USART1_UART_Init(void);
 /* USER CODE BEGIN PFP */
 int _write(int file, char *ptr, int len);
 void JumpToApplication(void);
+
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
@@ -87,7 +87,8 @@ void JumpToApplication(void)
 	// deinitilize peripherals
 	HAL_GPIO_DeInit(LED_GPIO_Port, LED_Pin);
 	HAL_GPIO_DeInit(BUTTON_GPIO_Port, BUTTON_Pin);
-	HAL_UART_DeInit(UART_PORT);
+	HAL_UART_DeInit(&huart1);
+	HAL_UART_DeInit(&huart2);
 
 	// En kritik satir, bu satir olmadan jump islemi gerceklesemez
 	HAL_RCC_DeInit();
@@ -335,6 +336,19 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 
 	}
 	HAL_UART_Receive_IT(huart, &rxChar, 1);
+}
+
+int uartTransmit(UART_HandleTypeDef* uart_port, uint8_t* message, int size)
+{
+	HAL_StatusTypeDef status;
+	status = HAL_UART_Transmit_IT(uart_port, message, size);
+	if (status == HAL_OK)
+	{
+		return 1;
+	}
+	else{
+		return -1;
+	}
 }
 
 /* USER CODE END 4 */

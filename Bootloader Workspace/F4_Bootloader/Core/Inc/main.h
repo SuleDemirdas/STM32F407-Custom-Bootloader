@@ -46,7 +46,9 @@ extern "C" {
 
 /* Exported macro ------------------------------------------------------------*/
 /* USER CODE BEGIN EM */
-#define BUFFER_SIZE		16
+#define BUFFER_SIZE		  16
+extern UART_HandleTypeDef huart1;
+#define UART_PORT 		  &huart1
 
 /* USER CODE END EM */
 
@@ -54,6 +56,7 @@ extern "C" {
 void Error_Handler(void);
 
 /* USER CODE BEGIN EFP */
+int uartTransmit(UART_HandleTypeDef* uart_port, uint8_t* message, int size);
 
 /* USER CODE END EFP */
 

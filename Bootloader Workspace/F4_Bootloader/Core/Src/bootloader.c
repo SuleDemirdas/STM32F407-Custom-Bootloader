@@ -8,6 +8,7 @@
 #include "bootloader.h"
 
 int test = 0;
+uint8_t response_get_version[2] = {0};
 
 void processBootloaderCommand(char* buffer)
 {
@@ -25,5 +26,12 @@ void processBootloaderCommand(char* buffer)
 
 void handleGetVersion(void)
 {
-	test++;
+	if (BOOTLOADER_VERSION > 0 && BOOTLOADER_VERSION <= 255) {
+		response_get_version[0] = ACK;
+		response_get_version[1] = BOOTLOADER_VERSION;
+	} else {
+		response_get_version[0] = NACK;
+		response_get_version[1] = UNKNOWN;
+	}
+	uartTransmit(UART_PORT, response_get_version, 2);
 }

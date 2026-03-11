@@ -101,10 +101,11 @@ int main(void)
   while (1)
   {
     /* USER CODE END WHILE */
-	HAL_GPIO_TogglePin(LED_GPIO_Port, LED_Pin);
-	HAL_UART_Transmit(&huart2, message_u8, MESSAGE_SIZE, HAL_MAX_DELAY);
-	HAL_Delay(500);
+
     /* USER CODE BEGIN 3 */
+	HAL_UART_Transmit(&huart1, message_u8, MESSAGE_SIZE, HAL_MAX_DELAY);
+	HAL_GPIO_TogglePin(LED_GPIO_Port, LED_Pin);
+	HAL_Delay(500);
   }
   /* USER CODE END 3 */
 }
@@ -236,6 +237,7 @@ static void MX_GPIO_Init(void)
   /* GPIO Ports Clock Enable */
   __HAL_RCC_GPIOA_CLK_ENABLE();
   __HAL_RCC_GPIOD_CLK_ENABLE();
+  __HAL_RCC_GPIOB_CLK_ENABLE();
 
   /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(LED_GPIO_Port, LED_Pin, GPIO_PIN_RESET);

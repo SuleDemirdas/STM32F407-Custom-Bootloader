@@ -34,4 +34,7 @@ void handleGetVersion(void);
 
 extern int test;
 
+extern uint8_t response_get_version[2];
+
+
 #endif /* INC_BOOTLOADER_H_ */
