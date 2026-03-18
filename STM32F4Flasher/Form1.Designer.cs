@@ -42,7 +42,12 @@
             comBoxComPort = new ComboBox();
             lblComPort = new Label();
             groupBox1 = new GroupBox();
+            btnGetHelp = new Button();
+            getVersion = new Button();
+            txtReceiveMessage = new TextBox();
+            btnclear = new Button();
             Connection.SuspendLayout();
+            groupBox1.SuspendLayout();
             SuspendLayout();
             // 
             // Connection
@@ -187,12 +192,53 @@
             // 
             // groupBox1
             // 
+            groupBox1.Controls.Add(btnclear);
+            groupBox1.Controls.Add(txtReceiveMessage);
+            groupBox1.Controls.Add(getVersion);
+            groupBox1.Controls.Add(btnGetHelp);
             groupBox1.Location = new Point(351, 18);
             groupBox1.Name = "groupBox1";
             groupBox1.Size = new Size(509, 489);
             groupBox1.TabIndex = 1;
             groupBox1.TabStop = false;
             groupBox1.Text = "Commands";
+            // 
+            // btnGetHelp
+            // 
+            btnGetHelp.Location = new Point(17, 29);
+            btnGetHelp.Name = "btnGetHelp";
+            btnGetHelp.Size = new Size(94, 29);
+            btnGetHelp.TabIndex = 9;
+            btnGetHelp.Text = "GET_HELP";
+            btnGetHelp.UseVisualStyleBackColor = true;
+            btnGetHelp.Click += button1_Click;
+            // 
+            // getVersion
+            // 
+            getVersion.Location = new Point(17, 71);
+            getVersion.Name = "getVersion";
+            getVersion.Size = new Size(94, 29);
+            getVersion.TabIndex = 10;
+            getVersion.Text = "GET_VER";
+            getVersion.UseVisualStyleBackColor = true;
+            getVersion.Click += getVersion_Click;
+            // 
+            // txtReceiveMessage
+            // 
+            txtReceiveMessage.Location = new Point(204, 29);
+            txtReceiveMessage.Multiline = true;
+            txtReceiveMessage.Name = "txtReceiveMessage";
+            txtReceiveMessage.Size = new Size(268, 148);
+            txtReceiveMessage.TabIndex = 11;
+            // 
+            // btnclear
+            // 
+            btnclear.Location = new Point(288, 190);
+            btnclear.Name = "btnclear";
+            btnclear.Size = new Size(94, 29);
+            btnclear.TabIndex = 12;
+            btnclear.Text = "CLEAR";
+            btnclear.UseVisualStyleBackColor = true;
             // 
             // STM32F4Flasher
             // 
@@ -206,6 +252,8 @@
             Load += Form1_Load;
             Connection.ResumeLayout(false);
             Connection.PerformLayout();
+            groupBox1.ResumeLayout(false);
+            groupBox1.PerformLayout();
             ResumeLayout(false);
         }
 
@@ -225,5 +273,9 @@
         private Label connectionStatus;
         private ProgressBar progressBar;
         private GroupBox groupBox1;
+        private Button btnGetHelp;
+        private Button getVersion;
+        private Button btnclear;
+        private TextBox txtReceiveMessage;
     }
 }

@@ -12,6 +12,19 @@ namespace STM32F4Flasher
             InitializeComponent();
         }
 
+        public enum BootloaderCommand : byte
+        {
+            GetHelp = 0x00,
+            GetVersion = 0x01,
+            GetID = 0x02,
+            ReadMemory = 0x11,
+            Go = 0x21,
+            WriteMemory = 0x31,
+            Erase = 0x43,
+            WriteProtect = 0x63,
+            ReadoutProtect = 0x82,
+            GetCheckSum = 0xA1
+        }
         private void groupBox1_Enter(object sender, EventArgs e)
         {
 
@@ -107,6 +120,52 @@ namespace STM32F4Flasher
                 comBoxComPort.Enabled = true;
                 connectionStatus.Text = "Disconnected";
                 progressBar.Value = 0;
+            }
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void getVersion_Click(object sender, EventArgs e)
+        {
+            byte cmd = (byte)BootloaderCommand.GetVersion;
+            SendBootloaderCommand(cmd, new byte[0]);
+        }
+        byte CalculateCRC8(byte[] data)
+        {
+            byte crc = 0;
+            foreach (byte b in data)
+            {
+                crc ^= b;
+                for (int i = 0; i < 8; i++)
+                {
+                    if ((crc & 0x80) != 0)
+                        crc = (byte)((crc << 1) ^ 0x07); // Polynomial x^8 + x^2 + x + 1
+                    else
+                        crc <<= 1;
+                }
+            }
+            return crc;
+        }
+        private void SendBootloaderCommand(byte cmd, byte[] data)
+        {
+            List<byte> packet = new List<byte>();
+            packet.Add(0x7F); // Bootloader Header
+            packet.Add((byte)(1+data.Length)); // len = cmd + data
+            packet.Add(cmd); // Command
+            packet.AddRange(data); // Data
+            
+            byte[] crcInput = packet.Skip(1).ToArray(); // CRC is calculated on len + cmd + data
+            byte crc = CalculateCRC8(crcInput);
+            packet.Add(crc); // CRC
+
+            if (serialPort1.IsOpen)
+            {
+                serialPort1.Write(packet.ToArray(), 0, packet.Count);
+                serialPort1.Write("\r");
+                serialPort1.Write("\n");
             }
         }
     }
