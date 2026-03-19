@@ -125,17 +125,6 @@ namespace STM32F4Flasher
             }
         }
 
-        private void button1_Click(object sender, EventArgs e)
-        {
-            byte cmd = (byte)BootloaderCommand.GetHelp;
-            SendBootloaderCommand(cmd, new byte[0]);
-        }
-
-        private void getVersion_Click(object sender, EventArgs e)
-        {
-            byte cmd = (byte)BootloaderCommand.GetVersion;
-            SendBootloaderCommand(cmd, new byte[0]);
-        }
         byte CalculateCRC8(byte[] data)
         {
             byte crc = 0;
@@ -203,6 +192,24 @@ namespace STM32F4Flasher
         private void btnclear_Click(object sender, EventArgs e)
         {
             txtReceiveMessage.Text = string.Empty;
+        }
+
+        private void btnGetHelp_Click(object sender, EventArgs e)
+        {
+            byte cmd = (byte)BootloaderCommand.GetHelp;
+            SendBootloaderCommand(cmd, new byte[0]);
+        }
+
+        private void getVersion_Click(object sender, EventArgs e)
+        {
+            byte cmd = (byte)BootloaderCommand.GetVersion;
+            SendBootloaderCommand(cmd, new byte[0]);
+        }
+
+        private void btnGetID_Click(object sender, EventArgs e)
+        {
+            byte cmd = (byte)BootloaderCommand.GetID;
+            SendBootloaderCommand(cmd, new byte[0]);
         }
     }
 }

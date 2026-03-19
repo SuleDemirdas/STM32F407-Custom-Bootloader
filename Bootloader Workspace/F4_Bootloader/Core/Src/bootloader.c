@@ -8,7 +8,7 @@
 #include "bootloader.h"
 
 int test = 0;
-uint8_t response_get_version[2] = {0};
+uint8_t response_get_version[RESPONSE_GET_VERSION_SIZE] = {0};
 uint8_t commands[NUM_OF_COMMANDS] = {
 		GET_HELP,
 		GET_VERSION,
@@ -21,7 +21,8 @@ uint8_t commands[NUM_OF_COMMANDS] = {
 		READOUT_PROTECT_UNPROTECT,
 		GET_CHECKSUM
 };
-uint8_t response_get_help[13] = {0};
+uint8_t response_get_help[RESPONSE_GET_HELP_SIZE] = {0};
+uint8_t response_get_id[RESPONSE_GET_ID_SIZE] = {0};
 
 void processBootloaderCommand(char* buffer)
 {
@@ -33,6 +34,9 @@ void processBootloaderCommand(char* buffer)
 			break;
 		case GET_HELP:
 			handleGetHelp();
+			break;
+		case GET_ID:
+			handleGetID();
 			break;
 		default:
 			break;
@@ -49,7 +53,7 @@ void handleGetVersion(void)
 		response_get_version[0] = NACK;
 		response_get_version[1] = UNKNOWN;
 	}
-	uartTransmit(UART_PORT, response_get_version, 2);
+	uartTransmit(UART_PORT, response_get_version, RESPONSE_GET_VERSION_SIZE);
 }
 
 
@@ -64,6 +68,16 @@ void handleGetHelp(void)
 		response_get_help[i+3] = commands[i];
 	}
 
-	uartTransmit(UART_PORT, response_get_help, sizeof(response_get_help));
+	uartTransmit(UART_PORT, response_get_help, RESPONSE_GET_HELP_SIZE);
 }
 
+void handleGetID(void)
+{
+	response_get_id[0] = ACK;
+	response_get_id[1] = 1;
+	response_get_id[2] = 0x04;
+	response_get_id[3] = DEVICE_ID;
+
+	uartTransmit(UART_PORT, response_get_id, RESPONSE_GET_ID_SIZE);
+
+}

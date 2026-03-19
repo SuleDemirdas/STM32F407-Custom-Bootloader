@@ -42,10 +42,11 @@
             comBoxComPort = new ComboBox();
             lblComPort = new Label();
             groupBox1 = new GroupBox();
+            btnGetHelp = new Button();
             btnclear = new Button();
             txtReceiveMessage = new TextBox();
             getVersion = new Button();
-            btnGetHelp = new Button();
+            btnGetID = new Button();
             Connection.SuspendLayout();
             groupBox1.SuspendLayout();
             SuspendLayout();
@@ -192,16 +193,27 @@
             // 
             // groupBox1
             // 
+            groupBox1.Controls.Add(btnGetID);
+            groupBox1.Controls.Add(btnGetHelp);
             groupBox1.Controls.Add(btnclear);
             groupBox1.Controls.Add(txtReceiveMessage);
             groupBox1.Controls.Add(getVersion);
-            groupBox1.Controls.Add(btnGetHelp);
             groupBox1.Location = new Point(351, 18);
             groupBox1.Name = "groupBox1";
             groupBox1.Size = new Size(509, 489);
             groupBox1.TabIndex = 1;
             groupBox1.TabStop = false;
             groupBox1.Text = "Commands";
+            // 
+            // btnGetHelp
+            // 
+            btnGetHelp.Location = new Point(17, 29);
+            btnGetHelp.Name = "btnGetHelp";
+            btnGetHelp.Size = new Size(94, 29);
+            btnGetHelp.TabIndex = 13;
+            btnGetHelp.Text = "GET_HELP";
+            btnGetHelp.UseVisualStyleBackColor = true;
+            btnGetHelp.Click += btnGetHelp_Click;
             // 
             // btnclear
             // 
@@ -232,15 +244,15 @@
             getVersion.UseVisualStyleBackColor = true;
             getVersion.Click += getVersion_Click;
             // 
-            // btnGetHelp
+            // btnGetID
             // 
-            btnGetHelp.Location = new Point(17, 29);
-            btnGetHelp.Name = "btnGetHelp";
-            btnGetHelp.Size = new Size(94, 29);
-            btnGetHelp.TabIndex = 9;
-            btnGetHelp.Text = "GET_HELP";
-            btnGetHelp.UseVisualStyleBackColor = true;
-            btnGetHelp.Click += button1_Click;
+            btnGetID.Location = new Point(17, 115);
+            btnGetID.Name = "btnGetID";
+            btnGetID.Size = new Size(94, 29);
+            btnGetID.TabIndex = 14;
+            btnGetID.Text = "GET_ID";
+            btnGetID.UseVisualStyleBackColor = true;
+            btnGetID.Click += btnGetID_Click;
             // 
             // STM32F4Flasher
             // 
@@ -275,9 +287,10 @@
         private Label connectionStatus;
         private ProgressBar progressBar;
         private GroupBox groupBox1;
-        private Button btnGetHelp;
         private Button getVersion;
         private Button btnclear;
         private TextBox txtReceiveMessage;
+        private Button btnGetHelp;
+        private Button btnGetID;
     }
 }

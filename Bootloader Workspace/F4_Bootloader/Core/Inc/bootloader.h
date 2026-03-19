@@ -13,6 +13,7 @@
 #define BOOTLOADER_HEADER			0x7F
 #define APPLICATION_HEADER			0x7E
 #define BOOTLOADER_VERSION			0x10
+#define DEVICE_ID					(DBGMCU->IDCODE & 0xFF)	// Device's ID(STM32F407x): 0x413
 /*COMMANDS*/
 #define GET_HELP					0x00
 #define GET_VERSION					0x01
@@ -30,10 +31,14 @@
 #define UNKNOWN						0x99
 
 #define NUM_OF_COMMANDS				10
+#define RESPONSE_GET_HELP_SIZE		13
+#define RESPONSE_GET_VERSION_SIZE	2
+#define RESPONSE_GET_ID_SIZE		4
 
 void processBootloaderCommand(char* buffer);
 void handleGetVersion(void);
 void handleGetHelp(void);
+void handleGetID(void);
 
 extern int test;
 
