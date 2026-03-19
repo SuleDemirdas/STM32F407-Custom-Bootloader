@@ -42,10 +42,10 @@
             comBoxComPort = new ComboBox();
             lblComPort = new Label();
             groupBox1 = new GroupBox();
-            btnGetHelp = new Button();
-            getVersion = new Button();
-            txtReceiveMessage = new TextBox();
             btnclear = new Button();
+            txtReceiveMessage = new TextBox();
+            getVersion = new Button();
+            btnGetHelp = new Button();
             Connection.SuspendLayout();
             groupBox1.SuspendLayout();
             SuspendLayout();
@@ -203,15 +203,24 @@
             groupBox1.TabStop = false;
             groupBox1.Text = "Commands";
             // 
-            // btnGetHelp
+            // btnclear
             // 
-            btnGetHelp.Location = new Point(17, 29);
-            btnGetHelp.Name = "btnGetHelp";
-            btnGetHelp.Size = new Size(94, 29);
-            btnGetHelp.TabIndex = 9;
-            btnGetHelp.Text = "GET_HELP";
-            btnGetHelp.UseVisualStyleBackColor = true;
-            btnGetHelp.Click += button1_Click;
+            btnclear.Location = new Point(288, 190);
+            btnclear.Name = "btnclear";
+            btnclear.Size = new Size(94, 29);
+            btnclear.TabIndex = 12;
+            btnclear.Text = "CLEAR";
+            btnclear.UseVisualStyleBackColor = true;
+            btnclear.Click += btnclear_Click;
+            // 
+            // txtReceiveMessage
+            // 
+            txtReceiveMessage.Location = new Point(204, 29);
+            txtReceiveMessage.Multiline = true;
+            txtReceiveMessage.Name = "txtReceiveMessage";
+            txtReceiveMessage.Size = new Size(268, 148);
+            txtReceiveMessage.TabIndex = 11;
+            txtReceiveMessage.TextChanged += txtReceiveMessage_TextChanged;
             // 
             // getVersion
             // 
@@ -223,22 +232,15 @@
             getVersion.UseVisualStyleBackColor = true;
             getVersion.Click += getVersion_Click;
             // 
-            // txtReceiveMessage
+            // btnGetHelp
             // 
-            txtReceiveMessage.Location = new Point(204, 29);
-            txtReceiveMessage.Multiline = true;
-            txtReceiveMessage.Name = "txtReceiveMessage";
-            txtReceiveMessage.Size = new Size(268, 148);
-            txtReceiveMessage.TabIndex = 11;
-            // 
-            // btnclear
-            // 
-            btnclear.Location = new Point(288, 190);
-            btnclear.Name = "btnclear";
-            btnclear.Size = new Size(94, 29);
-            btnclear.TabIndex = 12;
-            btnclear.Text = "CLEAR";
-            btnclear.UseVisualStyleBackColor = true;
+            btnGetHelp.Location = new Point(17, 29);
+            btnGetHelp.Name = "btnGetHelp";
+            btnGetHelp.Size = new Size(94, 29);
+            btnGetHelp.TabIndex = 9;
+            btnGetHelp.Text = "GET_HELP";
+            btnGetHelp.UseVisualStyleBackColor = true;
+            btnGetHelp.Click += button1_Click;
             // 
             // STM32F4Flasher
             // 

@@ -51,7 +51,7 @@ UART_HandleTypeDef huart1;
 UART_HandleTypeDef huart2;
 
 /* USER CODE BEGIN PV */
-uint8_t message[MESSAGE_SIZE] = "Jumping to Application...\n\r";
+uint8_t message_jump[MESSAGE_SIZE] = "Jumping to Application...\n\r";
 uint8_t rxChar;
 uint8_t bufferIndex;
 char messageBuffer[BUFFER_SIZE];
@@ -157,9 +157,9 @@ int main(void)
     /* USER CODE BEGIN 3 */
 	  if(HAL_GPIO_ReadPin(BUTTON_GPIO_Port, BUTTON_Pin))
 	  {
-		  HAL_UART_Transmit(UART_PORT, message, MESSAGE_SIZE, HAL_MAX_DELAY);
+		  HAL_UART_Transmit(UART_PORT, message_jump, MESSAGE_SIZE, HAL_MAX_DELAY);
 #ifdef PRINT_DEBUG
-		  printf("%s",message);
+		  printf("%s",message_jump);
 #endif
 		  JumpToApplication();
 	  }

@@ -80,15 +80,16 @@ namespace STM32F4Flasher
             serialPort1.StopBits = comBoxStopBits.Text == "1" ? StopBits.One :
                                     comBoxStopBits.Text == "1.5" ? StopBits.OnePointFive :
                                     comBoxStopBits.Text == "2" ? StopBits.Two : StopBits.One;
-
             try
             {
+                serialPort1.DataReceived += new SerialDataReceivedEventHandler(SerialPort1_DataReceived);
                 serialPort1.Open();
                 buttonConnect.Enabled = false;
                 buttonDisconnect.Enabled = true;
                 comBoxComPort.Enabled = false;
                 connectionStatus.Text = "Connected";
                 progressBar.Value = 100;
+                txtReceiveMessage.Text = string.Empty;
             }
             catch
             {
@@ -120,6 +121,7 @@ namespace STM32F4Flasher
                 comBoxComPort.Enabled = true;
                 connectionStatus.Text = "Disconnected";
                 progressBar.Value = 0;
+                txtReceiveMessage.Text = string.Empty;
             }
         }
 
@@ -153,10 +155,10 @@ namespace STM32F4Flasher
         {
             List<byte> packet = new List<byte>();
             packet.Add(0x7F); // Bootloader Header
-            packet.Add((byte)(1+data.Length)); // len = cmd + data
+            packet.Add((byte)(1 + data.Length)); // len = cmd + data
             packet.Add(cmd); // Command
             packet.AddRange(data); // Data
-            
+
             byte[] crcInput = packet.Skip(1).ToArray(); // CRC is calculated on len + cmd + data
             byte crc = CalculateCRC8(crcInput);
             packet.Add(crc); // CRC
@@ -167,6 +169,39 @@ namespace STM32F4Flasher
                 serialPort1.Write("\r");
                 serialPort1.Write("\n");
             }
+        }
+
+        private void SerialPort1_DataReceived(object sender, SerialDataReceivedEventArgs e)
+        {
+            try
+            {
+                int bytesToRead = serialPort1.BytesToRead;
+                byte[] buffer = new byte[bytesToRead];
+                serialPort1.Read(buffer, 0, bytesToRead);
+
+                string hexOutput = BitConverter.ToString(buffer).Replace("-", " ");
+
+                this.Invoke(new Action(() =>
+                {
+                    txtReceiveMessage.AppendText(hexOutput + Environment.NewLine);
+                    txtReceiveMessage.SelectionStart = txtReceiveMessage.Text.Length;
+                    txtReceiveMessage.ScrollToCaret();
+                }));
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error reading from serial port: " + ex.Message, "Read Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+
+            }
+        }
+
+        private void txtReceiveMessage_TextChanged(object sender, EventArgs e)
+        {
+        }
+
+        private void btnclear_Click(object sender, EventArgs e)
+        {
+            txtReceiveMessage.Text = string.Empty;
         }
     }
 }
