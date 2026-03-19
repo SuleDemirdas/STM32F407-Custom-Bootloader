@@ -29,8 +29,11 @@
 #define NACK						0x1F
 #define UNKNOWN						0x99
 
+#define NUM_OF_COMMANDS				10
+
 void processBootloaderCommand(char* buffer);
 void handleGetVersion(void);
+void handleGetHelp(void);
 
 extern int test;
 

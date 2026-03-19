@@ -127,7 +127,8 @@ namespace STM32F4Flasher
 
         private void button1_Click(object sender, EventArgs e)
         {
-
+            byte cmd = (byte)BootloaderCommand.GetHelp;
+            SendBootloaderCommand(cmd, new byte[0]);
         }
 
         private void getVersion_Click(object sender, EventArgs e)
