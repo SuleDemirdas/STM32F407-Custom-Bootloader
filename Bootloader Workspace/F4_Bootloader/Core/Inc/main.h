@@ -48,6 +48,7 @@ extern "C" {
 /* USER CODE BEGIN EM */
 #define BUFFER_SIZE		  16
 extern UART_HandleTypeDef huart1;
+extern UART_HandleTypeDef huart2;
 #define UART_PORT 		  &huart1
 
 /* USER CODE END EM */

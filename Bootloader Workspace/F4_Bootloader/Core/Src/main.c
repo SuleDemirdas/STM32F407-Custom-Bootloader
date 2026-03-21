@@ -55,7 +55,8 @@ uint8_t message_jump[MESSAGE_SIZE] = "Jumping to Application...\n\r";
 uint8_t rxChar;
 uint8_t bufferIndex;
 char messageBuffer[BUFFER_SIZE];
-
+volatile uint8_t jumpFlag = 0;
+volatile uint32_t jumpAddress = 0;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -163,6 +164,11 @@ int main(void)
 #endif
 		  JumpToApplication();
 	  }
+
+	if(jumpFlag)  // <-- jump happens in main context, not IRQ
+	{
+		GoToAddress(jumpAddress);
+	}
   }
   //HAL_NVIC_SystemReset()
   /* USER CODE END 3 */

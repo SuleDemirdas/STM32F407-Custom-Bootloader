@@ -301,6 +301,45 @@ namespace STM32F4Flasher
                 }
             }
         }
+
+        private void btn_goAddr_Click(object sender, EventArgs e)
+        {
+            if (string.IsNullOrWhiteSpace(txtBox_goAddr.Text))
+            {
+                MessageBox.Show("Please enter a valid address.", "Warning");
+                return;
+            }
+            List<byte> packet = new List<byte>();
+            packet.Add(0x7F); // Bootloader Header
+            packet.Add(0x08); // len =  data length
+            packet.Add((byte)BootloaderCommand.Go); // Command
+
+            // Parse address (hex input)
+            if (!uint.TryParse(txtBox_goAddr.Text, System.Globalization.NumberStyles.HexNumber, null, out uint gotoAddress))
+            {
+                MessageBox.Show("Invalid address. Enter hex e.g. 08000000");
+                return;
+            }
+
+            // Step 3: Build address bytes + CRC8
+            byte b3 = (byte)((gotoAddress >> 24) & 0xFF);
+            byte b4 = (byte)((gotoAddress >> 16) & 0xFF);
+            byte b5 = (byte)((gotoAddress >> 8) & 0xFF);
+            byte b6 = (byte)(gotoAddress & 0xFF);
+            byte[] gotoAddr = { b3, b4, b5, b6 };
+            packet.AddRange(gotoAddr);
+
+            byte gotoAddrCRC = CalculateCRC8(new byte[] { b3, b4, b5, b6 });
+            packet.Add(gotoAddrCRC);
+
+            if (serialPort1.IsOpen)
+            {
+                serialPort1.Write(packet.ToArray(), 0, packet.Count);
+                serialPort1.Write("\r");
+                serialPort1.Write("\n");
+
+            }
+        }
     }
-    
+
 }

@@ -42,6 +42,7 @@
             comBoxComPort = new ComboBox();
             lblComPort = new Label();
             groupBox1 = new GroupBox();
+            btnSave = new Button();
             txtboxLength = new TextBox();
             txtboxAddress = new TextBox();
             lblLength = new Label();
@@ -52,7 +53,8 @@
             btnclear = new Button();
             txtReceiveMessage = new TextBox();
             getVersion = new Button();
-            btnSave = new Button();
+            btn_goAddr = new Button();
+            txtBox_goAddr = new TextBox();
             Connection.SuspendLayout();
             groupBox1.SuspendLayout();
             SuspendLayout();
@@ -199,6 +201,8 @@
             // 
             // groupBox1
             // 
+            groupBox1.Controls.Add(txtBox_goAddr);
+            groupBox1.Controls.Add(btn_goAddr);
             groupBox1.Controls.Add(btnSave);
             groupBox1.Controls.Add(txtboxLength);
             groupBox1.Controls.Add(txtboxAddress);
@@ -216,6 +220,16 @@
             groupBox1.TabIndex = 1;
             groupBox1.TabStop = false;
             groupBox1.Text = "Commands";
+            // 
+            // btnSave
+            // 
+            btnSave.Location = new Point(676, 164);
+            btnSave.Name = "btnSave";
+            btnSave.Size = new Size(94, 29);
+            btnSave.TabIndex = 20;
+            btnSave.Text = "SAVE";
+            btnSave.UseVisualStyleBackColor = true;
+            btnSave.Click += btnSave_Click;
             // 
             // txtboxLength
             // 
@@ -253,7 +267,7 @@
             // 
             // btnReadMem
             // 
-            btnReadMem.Location = new Point(27, 177);
+            btnReadMem.Location = new Point(27, 185);
             btnReadMem.Name = "btnReadMem";
             btnReadMem.Size = new Size(94, 29);
             btnReadMem.TabIndex = 15;
@@ -263,7 +277,7 @@
             // 
             // btnGetID
             // 
-            btnGetID.Location = new Point(27, 139);
+            btnGetID.Location = new Point(27, 144);
             btnGetID.Name = "btnGetID";
             btnGetID.Size = new Size(94, 29);
             btnGetID.TabIndex = 14;
@@ -273,7 +287,7 @@
             // 
             // btnGetHelp
             // 
-            btnGetHelp.Location = new Point(27, 53);
+            btnGetHelp.Location = new Point(27, 62);
             btnGetHelp.Name = "btnGetHelp";
             btnGetHelp.Size = new Size(94, 29);
             btnGetHelp.TabIndex = 13;
@@ -302,7 +316,7 @@
             // 
             // getVersion
             // 
-            getVersion.Location = new Point(27, 95);
+            getVersion.Location = new Point(27, 106);
             getVersion.Name = "getVersion";
             getVersion.Size = new Size(94, 29);
             getVersion.TabIndex = 10;
@@ -310,15 +324,23 @@
             getVersion.UseVisualStyleBackColor = true;
             getVersion.Click += getVersion_Click;
             // 
-            // btnSave
+            // btn_goAddr
             // 
-            btnSave.Location = new Point(676, 164);
-            btnSave.Name = "btnSave";
-            btnSave.Size = new Size(94, 29);
-            btnSave.TabIndex = 20;
-            btnSave.Text = "SAVE";
-            btnSave.UseVisualStyleBackColor = true;
-            btnSave.Click += btnSave_Click;
+            btn_goAddr.Location = new Point(27, 226);
+            btn_goAddr.Name = "btn_goAddr";
+            btn_goAddr.Size = new Size(94, 29);
+            btn_goAddr.TabIndex = 21;
+            btn_goAddr.Text = "GO_ADDR";
+            btn_goAddr.UseVisualStyleBackColor = true;
+            btn_goAddr.Click += btn_goAddr_Click;
+            // 
+            // txtBox_goAddr
+            // 
+            txtBox_goAddr.ForeColor = SystemColors.InactiveCaptionText;
+            txtBox_goAddr.Location = new Point(157, 227);
+            txtBox_goAddr.Name = "txtBox_goAddr";
+            txtBox_goAddr.Size = new Size(101, 27);
+            txtBox_goAddr.TabIndex = 22;
             // 
             // STM32F4Flasher
             // 
@@ -364,5 +386,7 @@
         private TextBox txtboxAddress;
         private Label lblLength;
         private Button btnSave;
+        private TextBox txtBox_goAddr;
+        private Button btn_goAddr;
     }
 }

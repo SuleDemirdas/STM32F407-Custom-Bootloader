@@ -43,6 +43,8 @@ void handleGetVersion(void);
 void handleGetHelp(void);
 void handleGetID(void);
 int handleReadMem(char* buffer);
+int handleGoToAddress(char* buffer);
+void GoToAddress(uint32_t address);
 uint8_t CalculateCRC8(uint8_t* data, uint32_t length);
 
 extern int test;
