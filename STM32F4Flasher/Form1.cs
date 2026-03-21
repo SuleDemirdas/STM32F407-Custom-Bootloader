@@ -248,7 +248,7 @@ namespace STM32F4Flasher
             byte addrCRC = CalculateCRC8(new byte[] { b3, b4, b5, b6 });
             packet.Add(addrCRC);
 
-            packet.Add((byte)(length)); 
+            packet.Add((byte)(length));
 
             if (serialPort1.IsOpen)
             {
@@ -258,5 +258,49 @@ namespace STM32F4Flasher
 
             }
         }
+
+        private void btnSave_Click(object sender, EventArgs e)
+        {
+            if (string.IsNullOrWhiteSpace(txtReceiveMessage.Text))
+            {
+                MessageBox.Show("No data to save!", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            using (SaveFileDialog sfd = new SaveFileDialog())
+            {
+                sfd.Filter = "Binary Dosyası (*.bin)|*.bin";
+                sfd.Title = "Save";
+                sfd.FileName = "output.bin";
+
+                if (sfd.ShowDialog() == DialogResult.OK)
+                {
+                    try
+                    {
+                        string rawText = txtReceiveMessage.Text;
+                        string cleanHex = rawText.Replace(" ", "").Replace("\r", "").Replace("\n", "");
+                        if (cleanHex.Length % 2 != 0)
+                        {
+                            MessageBox.Show("Error saving data!", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                            return;
+                        }
+
+                        byte[] binaryData = new byte[cleanHex.Length / 2];
+                        for (int i = 0; i < binaryData.Length; i++)
+                        {
+                            binaryData[i] = Convert.ToByte(cleanHex.Substring(i * 2, 2), 16);
+                        }
+
+                        System.IO.File.WriteAllBytes(sfd.FileName, binaryData);
+
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show("Error: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    }
+                }
+            }
+        }
     }
+    
 }

@@ -52,6 +52,7 @@
             btnclear = new Button();
             txtReceiveMessage = new TextBox();
             getVersion = new Button();
+            btnSave = new Button();
             Connection.SuspendLayout();
             groupBox1.SuspendLayout();
             SuspendLayout();
@@ -198,6 +199,7 @@
             // 
             // groupBox1
             // 
+            groupBox1.Controls.Add(btnSave);
             groupBox1.Controls.Add(txtboxLength);
             groupBox1.Controls.Add(txtboxAddress);
             groupBox1.Controls.Add(lblLength);
@@ -210,7 +212,7 @@
             groupBox1.Controls.Add(getVersion);
             groupBox1.Location = new Point(351, 18);
             groupBox1.Name = "groupBox1";
-            groupBox1.Size = new Size(665, 489);
+            groupBox1.Size = new Size(800, 489);
             groupBox1.TabIndex = 1;
             groupBox1.TabStop = false;
             groupBox1.Text = "Commands";
@@ -281,7 +283,7 @@
             // 
             // btnclear
             // 
-            btnclear.Location = new Point(456, 180);
+            btnclear.Location = new Point(562, 164);
             btnclear.Name = "btnclear";
             btnclear.Size = new Size(94, 29);
             btnclear.TabIndex = 12;
@@ -291,10 +293,10 @@
             // 
             // txtReceiveMessage
             // 
-            txtReceiveMessage.Location = new Point(370, 48);
+            txtReceiveMessage.Location = new Point(414, 29);
             txtReceiveMessage.Multiline = true;
             txtReceiveMessage.Name = "txtReceiveMessage";
-            txtReceiveMessage.Size = new Size(272, 125);
+            txtReceiveMessage.Size = new Size(356, 125);
             txtReceiveMessage.TabIndex = 11;
             txtReceiveMessage.TextChanged += txtReceiveMessage_TextChanged;
             // 
@@ -308,11 +310,21 @@
             getVersion.UseVisualStyleBackColor = true;
             getVersion.Click += getVersion_Click;
             // 
+            // btnSave
+            // 
+            btnSave.Location = new Point(676, 164);
+            btnSave.Name = "btnSave";
+            btnSave.Size = new Size(94, 29);
+            btnSave.TabIndex = 20;
+            btnSave.Text = "SAVE";
+            btnSave.UseVisualStyleBackColor = true;
+            btnSave.Click += btnSave_Click;
+            // 
             // STM32F4Flasher
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(1028, 650);
+            ClientSize = new Size(1163, 650);
             Controls.Add(groupBox1);
             Controls.Add(Connection);
             Name = "STM32F4Flasher";
@@ -351,5 +363,6 @@
         private TextBox txtboxLength;
         private TextBox txtboxAddress;
         private Label lblLength;
+        private Button btnSave;
     }
 }
