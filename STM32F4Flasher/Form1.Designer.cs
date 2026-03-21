@@ -42,11 +42,16 @@
             comBoxComPort = new ComboBox();
             lblComPort = new Label();
             groupBox1 = new GroupBox();
+            txtboxLength = new TextBox();
+            txtboxAddress = new TextBox();
+            lblLength = new Label();
+            lblAddress = new Label();
+            btnReadMem = new Button();
+            btnGetID = new Button();
             btnGetHelp = new Button();
             btnclear = new Button();
             txtReceiveMessage = new TextBox();
             getVersion = new Button();
-            btnGetID = new Button();
             Connection.SuspendLayout();
             groupBox1.SuspendLayout();
             SuspendLayout();
@@ -193,6 +198,11 @@
             // 
             // groupBox1
             // 
+            groupBox1.Controls.Add(txtboxLength);
+            groupBox1.Controls.Add(txtboxAddress);
+            groupBox1.Controls.Add(lblLength);
+            groupBox1.Controls.Add(lblAddress);
+            groupBox1.Controls.Add(btnReadMem);
             groupBox1.Controls.Add(btnGetID);
             groupBox1.Controls.Add(btnGetHelp);
             groupBox1.Controls.Add(btnclear);
@@ -200,14 +210,68 @@
             groupBox1.Controls.Add(getVersion);
             groupBox1.Location = new Point(351, 18);
             groupBox1.Name = "groupBox1";
-            groupBox1.Size = new Size(509, 489);
+            groupBox1.Size = new Size(665, 489);
             groupBox1.TabIndex = 1;
             groupBox1.TabStop = false;
             groupBox1.Text = "Commands";
             // 
+            // txtboxLength
+            // 
+            txtboxLength.ForeColor = SystemColors.InactiveCaptionText;
+            txtboxLength.Location = new Point(264, 187);
+            txtboxLength.Name = "txtboxLength";
+            txtboxLength.Size = new Size(99, 27);
+            txtboxLength.TabIndex = 19;
+            // 
+            // txtboxAddress
+            // 
+            txtboxAddress.ForeColor = SystemColors.InactiveCaptionText;
+            txtboxAddress.Location = new Point(157, 187);
+            txtboxAddress.Name = "txtboxAddress";
+            txtboxAddress.Size = new Size(101, 27);
+            txtboxAddress.TabIndex = 18;
+            // 
+            // lblLength
+            // 
+            lblLength.AutoSize = true;
+            lblLength.Location = new Point(286, 164);
+            lblLength.Name = "lblLength";
+            lblLength.Size = new Size(54, 20);
+            lblLength.TabIndex = 17;
+            lblLength.Text = "Length";
+            // 
+            // lblAddress
+            // 
+            lblAddress.AutoSize = true;
+            lblAddress.Location = new Point(173, 164);
+            lblAddress.Name = "lblAddress";
+            lblAddress.Size = new Size(62, 20);
+            lblAddress.TabIndex = 16;
+            lblAddress.Text = "Address";
+            // 
+            // btnReadMem
+            // 
+            btnReadMem.Location = new Point(27, 177);
+            btnReadMem.Name = "btnReadMem";
+            btnReadMem.Size = new Size(94, 29);
+            btnReadMem.TabIndex = 15;
+            btnReadMem.Text = "READ_MEM";
+            btnReadMem.UseVisualStyleBackColor = true;
+            btnReadMem.Click += btnReadMem_Click;
+            // 
+            // btnGetID
+            // 
+            btnGetID.Location = new Point(27, 139);
+            btnGetID.Name = "btnGetID";
+            btnGetID.Size = new Size(94, 29);
+            btnGetID.TabIndex = 14;
+            btnGetID.Text = "GET_ID";
+            btnGetID.UseVisualStyleBackColor = true;
+            btnGetID.Click += btnGetID_Click;
+            // 
             // btnGetHelp
             // 
-            btnGetHelp.Location = new Point(17, 29);
+            btnGetHelp.Location = new Point(27, 53);
             btnGetHelp.Name = "btnGetHelp";
             btnGetHelp.Size = new Size(94, 29);
             btnGetHelp.TabIndex = 13;
@@ -217,7 +281,7 @@
             // 
             // btnclear
             // 
-            btnclear.Location = new Point(288, 190);
+            btnclear.Location = new Point(456, 180);
             btnclear.Name = "btnclear";
             btnclear.Size = new Size(94, 29);
             btnclear.TabIndex = 12;
@@ -227,16 +291,16 @@
             // 
             // txtReceiveMessage
             // 
-            txtReceiveMessage.Location = new Point(204, 29);
+            txtReceiveMessage.Location = new Point(370, 48);
             txtReceiveMessage.Multiline = true;
             txtReceiveMessage.Name = "txtReceiveMessage";
-            txtReceiveMessage.Size = new Size(268, 148);
+            txtReceiveMessage.Size = new Size(272, 125);
             txtReceiveMessage.TabIndex = 11;
             txtReceiveMessage.TextChanged += txtReceiveMessage_TextChanged;
             // 
             // getVersion
             // 
-            getVersion.Location = new Point(17, 71);
+            getVersion.Location = new Point(27, 95);
             getVersion.Name = "getVersion";
             getVersion.Size = new Size(94, 29);
             getVersion.TabIndex = 10;
@@ -244,21 +308,11 @@
             getVersion.UseVisualStyleBackColor = true;
             getVersion.Click += getVersion_Click;
             // 
-            // btnGetID
-            // 
-            btnGetID.Location = new Point(17, 115);
-            btnGetID.Name = "btnGetID";
-            btnGetID.Size = new Size(94, 29);
-            btnGetID.TabIndex = 14;
-            btnGetID.Text = "GET_ID";
-            btnGetID.UseVisualStyleBackColor = true;
-            btnGetID.Click += btnGetID_Click;
-            // 
             // STM32F4Flasher
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(869, 519);
+            ClientSize = new Size(1028, 650);
             Controls.Add(groupBox1);
             Controls.Add(Connection);
             Name = "STM32F4Flasher";
@@ -292,5 +346,10 @@
         private TextBox txtReceiveMessage;
         private Button btnGetHelp;
         private Button btnGetID;
+        private Button btnReadMem;
+        private Label lblAddress;
+        private TextBox txtboxLength;
+        private TextBox txtboxAddress;
+        private Label lblLength;
     }
 }

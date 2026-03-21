@@ -34,11 +34,16 @@
 #define RESPONSE_GET_HELP_SIZE		13
 #define RESPONSE_GET_VERSION_SIZE	2
 #define RESPONSE_GET_ID_SIZE		4
+#define RESPONSE_READ_MEM_SIZE      257
+
+#define SRAM2_END					0x2001FFFF
 
 void processBootloaderCommand(char* buffer);
 void handleGetVersion(void);
 void handleGetHelp(void);
 void handleGetID(void);
+int handleReadMem(char* buffer);
+uint8_t CalculateCRC8(uint8_t* data, uint32_t length);
 
 extern int test;
 

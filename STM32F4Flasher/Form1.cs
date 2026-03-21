@@ -1,6 +1,7 @@
 using System;
-using System.Windows.Forms;
 using System.IO.Ports;
+using System.Windows.Forms;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace STM32F4Flasher
 {
@@ -47,7 +48,7 @@ namespace STM32F4Flasher
 
         private void Form1_Load(object sender, EventArgs e)
         {
-            String[] ports = SerialPort.GetPortNames();
+            string[] ports = SerialPort.GetPortNames();
             comBoxComPort.Items.AddRange(ports);
 
             buttonConnect.Enabled = true;
@@ -210,6 +211,52 @@ namespace STM32F4Flasher
         {
             byte cmd = (byte)BootloaderCommand.GetID;
             SendBootloaderCommand(cmd, new byte[0]);
+        }
+        private void btnReadMem_Click(object sender, EventArgs e)
+        {
+            if (string.IsNullOrWhiteSpace(txtboxAddress.Text) || string.IsNullOrWhiteSpace(txtboxLength.Text))
+            {
+                MessageBox.Show("Please enter both address and length.", "Warning");
+                return;
+            }
+            List<byte> packet = new List<byte>();
+            packet.Add(0x7F); // Bootloader Header
+            packet.Add(0x08); // len =  data length
+            packet.Add((byte)BootloaderCommand.ReadMemory); // Command
+
+            // Parse address (hex input)
+            if (!uint.TryParse(txtboxAddress.Text, System.Globalization.NumberStyles.HexNumber, null, out uint startAddress))
+            {
+                MessageBox.Show("Invalid address. Enter hex e.g. 08000000");
+                return;
+            }
+            // Parse length
+            if (!int.TryParse(txtboxLength.Text, out int length) || length < 1 || length > 256)
+            {
+                MessageBox.Show("Invalid length. Enter 1–256.");
+                return;
+            }
+
+            // Step 3: Build address bytes + CRC8
+            byte b3 = (byte)((startAddress >> 24) & 0xFF);
+            byte b4 = (byte)((startAddress >> 16) & 0xFF);
+            byte b5 = (byte)((startAddress >> 8) & 0xFF);
+            byte b6 = (byte)(startAddress & 0xFF);
+            byte[] addr = { b3, b4, b5, b6 };
+            packet.AddRange(addr);
+
+            byte addrCRC = CalculateCRC8(new byte[] { b3, b4, b5, b6 });
+            packet.Add(addrCRC);
+
+            packet.Add((byte)(length)); 
+
+            if (serialPort1.IsOpen)
+            {
+                serialPort1.Write(packet.ToArray(), 0, packet.Count);
+                serialPort1.Write("\r");
+                serialPort1.Write("\n");
+
+            }
         }
     }
 }
