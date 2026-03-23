@@ -42,6 +42,10 @@
             comBoxComPort = new ComboBox();
             lblComPort = new Label();
             groupBox1 = new GroupBox();
+            btnBrowse = new Button();
+            txtBoxBinFile = new TextBox();
+            txtBox_writeMemAddr = new TextBox();
+            btnWriteMem = new Button();
             txtBox_goAddr = new TextBox();
             btn_goAddr = new Button();
             btnSave = new Button();
@@ -55,10 +59,7 @@
             btnclear = new Button();
             txtReceiveMessage = new TextBox();
             getVersion = new Button();
-            btnWriteMem = new Button();
-            txtBox_writeMemAddr = new TextBox();
-            txtbox_writeMemLength = new TextBox();
-            txtBoxWriteMemData = new TextBox();
+            progbarWriteMem = new ProgressBar();
             Connection.SuspendLayout();
             groupBox1.SuspendLayout();
             SuspendLayout();
@@ -205,8 +206,9 @@
             // 
             // groupBox1
             // 
-            groupBox1.Controls.Add(txtBoxWriteMemData);
-            groupBox1.Controls.Add(txtbox_writeMemLength);
+            groupBox1.Controls.Add(progbarWriteMem);
+            groupBox1.Controls.Add(btnBrowse);
+            groupBox1.Controls.Add(txtBoxBinFile);
             groupBox1.Controls.Add(txtBox_writeMemAddr);
             groupBox1.Controls.Add(btnWriteMem);
             groupBox1.Controls.Add(txtBox_goAddr);
@@ -228,6 +230,42 @@
             groupBox1.TabIndex = 1;
             groupBox1.TabStop = false;
             groupBox1.Text = "Commands";
+            // 
+            // btnBrowse
+            // 
+            btnBrowse.Location = new Point(573, 268);
+            btnBrowse.Name = "btnBrowse";
+            btnBrowse.Size = new Size(94, 29);
+            btnBrowse.TabIndex = 26;
+            btnBrowse.Text = "BROWSE";
+            btnBrowse.UseVisualStyleBackColor = true;
+            btnBrowse.Click += btnBrowse_Click;
+            // 
+            // txtBoxBinFile
+            // 
+            txtBoxBinFile.ForeColor = SystemColors.InactiveCaptionText;
+            txtBoxBinFile.Location = new Point(264, 270);
+            txtBoxBinFile.Name = "txtBoxBinFile";
+            txtBoxBinFile.Size = new Size(303, 27);
+            txtBoxBinFile.TabIndex = 25;
+            // 
+            // txtBox_writeMemAddr
+            // 
+            txtBox_writeMemAddr.ForeColor = SystemColors.InactiveCaptionText;
+            txtBox_writeMemAddr.Location = new Point(157, 271);
+            txtBox_writeMemAddr.Name = "txtBox_writeMemAddr";
+            txtBox_writeMemAddr.Size = new Size(101, 27);
+            txtBox_writeMemAddr.TabIndex = 24;
+            // 
+            // btnWriteMem
+            // 
+            btnWriteMem.Location = new Point(27, 269);
+            btnWriteMem.Name = "btnWriteMem";
+            btnWriteMem.Size = new Size(102, 29);
+            btnWriteMem.TabIndex = 23;
+            btnWriteMem.Text = "WRITE_MEM";
+            btnWriteMem.UseVisualStyleBackColor = true;
+            btnWriteMem.Click += btnWriteMem_Click;
             // 
             // txtBox_goAddr
             // 
@@ -350,39 +388,12 @@
             getVersion.UseVisualStyleBackColor = true;
             getVersion.Click += getVersion_Click;
             // 
-            // btnWriteMem
+            // progbarWriteMem
             // 
-            btnWriteMem.Location = new Point(27, 270);
-            btnWriteMem.Name = "btnWriteMem";
-            btnWriteMem.Size = new Size(94, 29);
-            btnWriteMem.TabIndex = 23;
-            btnWriteMem.Text = "WRITE_MEM";
-            btnWriteMem.UseVisualStyleBackColor = true;
-            btnWriteMem.Click += btnWriteMem_Click;
-            // 
-            // txtBox_writeMemAddr
-            // 
-            txtBox_writeMemAddr.ForeColor = SystemColors.InactiveCaptionText;
-            txtBox_writeMemAddr.Location = new Point(157, 271);
-            txtBox_writeMemAddr.Name = "txtBox_writeMemAddr";
-            txtBox_writeMemAddr.Size = new Size(101, 27);
-            txtBox_writeMemAddr.TabIndex = 24;
-            // 
-            // txtbox_writeMemLength
-            // 
-            txtbox_writeMemLength.ForeColor = SystemColors.InactiveCaptionText;
-            txtbox_writeMemLength.Location = new Point(264, 272);
-            txtbox_writeMemLength.Name = "txtbox_writeMemLength";
-            txtbox_writeMemLength.Size = new Size(99, 27);
-            txtbox_writeMemLength.TabIndex = 25;
-            // 
-            // txtBoxWriteMemData
-            // 
-            txtBoxWriteMemData.Location = new Point(414, 270);
-            txtBoxWriteMemData.Multiline = true;
-            txtBoxWriteMemData.Name = "txtBoxWriteMemData";
-            txtBoxWriteMemData.Size = new Size(356, 125);
-            txtBoxWriteMemData.TabIndex = 26;
+            progbarWriteMem.Location = new Point(676, 268);
+            progbarWriteMem.Name = "progbarWriteMem";
+            progbarWriteMem.Size = new Size(94, 29);
+            progbarWriteMem.TabIndex = 10;
             // 
             // STM32F4Flasher
             // 
@@ -432,7 +443,8 @@
         private Button btn_goAddr;
         private Button btnWriteMem;
         private TextBox txtBox_writeMemAddr;
-        private TextBox txtbox_writeMemLength;
-        private TextBox txtBoxWriteMemData;
+        private Button btnBrowse;
+        private TextBox txtBoxBinFile;
+        private ProgressBar progbarWriteMem;
     }
 }

@@ -1,5 +1,6 @@
 using System;
 using System.IO.Ports;
+using System.Net.Sockets;
 using System.Windows.Forms;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 
@@ -142,25 +143,6 @@ namespace STM32F4Flasher
             }
             return crc;
         }
-        private void SendBootloaderCommand(byte cmd, byte[] data)
-        {
-            List<byte> packet = new List<byte>();
-            packet.Add(0x7F); // Bootloader Header
-            packet.Add((byte)(1 + data.Length)); // len = cmd + data
-            packet.Add(cmd); // Command
-            packet.AddRange(data); // Data
-
-            byte[] crcInput = packet.Skip(1).ToArray(); // CRC is calculated on len + cmd + data
-            byte crc = CalculateCRC8(crcInput);
-            packet.Add(crc); // CRC
-
-            if (serialPort1.IsOpen)
-            {
-                serialPort1.Write(packet.ToArray(), 0, packet.Count);
-                serialPort1.Write("\r");
-                serialPort1.Write("\n");
-            }
-        }
 
         private void SerialPort1_DataReceived(object sender, SerialDataReceivedEventArgs e)
         {
@@ -197,20 +179,62 @@ namespace STM32F4Flasher
 
         private void btnGetHelp_Click(object sender, EventArgs e)
         {
+            List<byte> packet = new List<byte>();
+            packet.Add(0x7F); // Bootloader Header
+            packet.Add((byte)(0x03)); // len = cmd + crc (no data)
             byte cmd = (byte)BootloaderCommand.GetHelp;
-            SendBootloaderCommand(cmd, new byte[0]);
+            packet.Add(cmd); // Command
+
+            byte[] crcInput = packet.Skip(1).ToArray(); // CRC is calculated on len + cmd
+            byte crc = CalculateCRC8(crcInput);
+            packet.Add(crc); // CRC
+
+            if (serialPort1.IsOpen)
+            {
+                serialPort1.Write(packet.ToArray(), 0, packet.Count);
+                serialPort1.Write("\r");
+                serialPort1.Write("\n");
+            }
         }
 
         private void getVersion_Click(object sender, EventArgs e)
         {
+            List<byte> packet = new List<byte>();
+            packet.Add(0x7F); // Bootloader Header
+            packet.Add((byte)(0x03)); // len = cmd + crc (no data)
             byte cmd = (byte)BootloaderCommand.GetVersion;
-            SendBootloaderCommand(cmd, new byte[0]);
+            packet.Add(cmd); // Command
+
+            byte[] crcInput = packet.Skip(1).ToArray(); // CRC is calculated on len + cmd
+            byte crc = CalculateCRC8(crcInput);
+            packet.Add(crc); // CRC
+
+            if (serialPort1.IsOpen)
+            {
+                serialPort1.Write(packet.ToArray(), 0, packet.Count);
+                serialPort1.Write("\r");
+                serialPort1.Write("\n");
+            }
         }
 
         private void btnGetID_Click(object sender, EventArgs e)
         {
+            List<byte> packet = new List<byte>();
+            packet.Add(0x7F); // Bootloader Header
+            packet.Add((byte)(0x03)); // len = cmd + crc (no data)
             byte cmd = (byte)BootloaderCommand.GetID;
-            SendBootloaderCommand(cmd, new byte[0]);
+            packet.Add(cmd); // Command
+
+            byte[] crcInput = packet.Skip(1).ToArray(); // CRC is calculated on len + cmd
+            byte crc = CalculateCRC8(crcInput);
+            packet.Add(crc); // CRC
+
+            if (serialPort1.IsOpen)
+            {
+                serialPort1.Write(packet.ToArray(), 0, packet.Count);
+                serialPort1.Write("\r");
+                serialPort1.Write("\n");
+            }
         }
         private void btnReadMem_Click(object sender, EventArgs e)
         {
@@ -221,7 +245,7 @@ namespace STM32F4Flasher
             }
             List<byte> packet = new List<byte>();
             packet.Add(0x7F); // Bootloader Header
-            packet.Add(0x08); // len =  data length
+            packet.Add(0x0A); // len =  data length
             packet.Add((byte)BootloaderCommand.ReadMemory); // Command
 
             // Parse address (hex input)
@@ -231,9 +255,9 @@ namespace STM32F4Flasher
                 return;
             }
             // Parse length
-            if (!int.TryParse(txtboxLength.Text, out int length) || length < 1 || length > 256)
+            if (!int.TryParse(txtboxLength.Text, out int length) || length < 1 || length > 129)
             {
-                MessageBox.Show("Invalid length. Enter 1–256.");
+                MessageBox.Show("Invalid length. Enter 1–128.");
                 return;
             }
 
@@ -249,6 +273,8 @@ namespace STM32F4Flasher
             packet.Add(addrCRC);
 
             packet.Add((byte)(length));
+
+            packet.Add((byte)(~length));
 
             if (serialPort1.IsOpen)
             {
@@ -311,7 +337,7 @@ namespace STM32F4Flasher
             }
             List<byte> packet = new List<byte>();
             packet.Add(0x7F); // Bootloader Header
-            packet.Add(0x08); // len =  data length
+            packet.Add(0x06); // len =  data length
             packet.Add((byte)BootloaderCommand.Go); // Command
 
             // Parse address (hex input)
@@ -341,13 +367,34 @@ namespace STM32F4Flasher
             }
         }
 
-        private void btnWriteMem_Click(object sender, EventArgs e)
+        string binFilePath;
+        byte[] binData;
+        private void btnBrowse_Click(object sender, EventArgs e)
         {
-            if (string.IsNullOrWhiteSpace(txtBox_writeMemAddr.Text) ||
-                string.IsNullOrWhiteSpace(txtbox_writeMemLength.Text) ||
-                string.IsNullOrWhiteSpace(txtBoxWriteMemData.Text))
+            OpenFileDialog openFileDialog = new OpenFileDialog();
+            openFileDialog.Filter = "Binary Files (*.bin)|*.bin";
+            openFileDialog.Title = "Select a Binary File";
+
+            if (openFileDialog.ShowDialog() == DialogResult.OK)
             {
-                MessageBox.Show("Please enter address, length and data.", "Warning");
+                txtBoxBinFile.Text = openFileDialog.FileName;
+                binFilePath = txtBoxBinFile.Text;
+                binData = File.ReadAllBytes(binFilePath);
+            }
+
+        }
+
+        private async void btnWriteMem_Click(object sender, EventArgs e)
+        {
+            if (binData == null || binData.Length == 0)
+            {
+                MessageBox.Show("Please select a .bin file first.", "Warning");
+                return;
+            }
+
+            if (string.IsNullOrWhiteSpace(txtBox_writeMemAddr.Text))
+            {
+                MessageBox.Show("Please enter a start address.", "Warning");
                 return;
             }
 
@@ -358,61 +405,60 @@ namespace STM32F4Flasher
                 return;
             }
 
-            if (!int.TryParse(txtbox_writeMemLength.Text, out int length) || length < 1 || length > 256)
+            btnWriteMem.Enabled = false;
+
+            int totalBytes = binData.Length;
+            int offset = 0;
+            int blockNum = 0;
+
+            while (offset < totalBytes)
             {
-                MessageBox.Show("Invalid length. Enter 1-256.");
-                return;
-            }
+                int bytesToSend = Math.Min(64, totalBytes - offset);
+                byte[] chunk = new byte[bytesToSend];
+                Array.Copy(binData, offset, chunk, 0, bytesToSend);
 
-            // Parse hex string into byte array
-            string hexData = txtBoxWriteMemData.Text.Replace(" ", "");
-            if (hexData.Length % 2 != 0)
-            {
-                MessageBox.Show("Data hex string must have even number of characters.");
-                return;
-            }
+                uint currentAddress = startAddress + (uint)offset;
 
-            byte[] dataBytes = new byte[hexData.Length / 2];
-            for (int i = 0; i < dataBytes.Length; i++)
-            {
-                dataBytes[i] = Convert.ToByte(hexData.Substring(i * 2, 2), 16);
-            }
+                byte b3 = (byte)((currentAddress >> 24) & 0xFF);
+                byte b4 = (byte)((currentAddress >> 16) & 0xFF);
+                byte b5 = (byte)((currentAddress >> 8) & 0xFF);
+                byte b6 = (byte)(currentAddress & 0xFF);
+                byte[] addr = { b3, b4, b5, b6 };
 
-            if (dataBytes.Length != length)
-            {
-                MessageBox.Show($"Data length mismatch. Expected {length} bytes, got {dataBytes.Length}.");
-                return;
-            }
+                byte addrCRC = CalculateCRC8(addr);
+                byte dataCRC = CalculateCRC8(chunk);
 
-            // Build packet
-            List<byte> packet = new List<byte>();
-            packet.Add(0x7F);                                    // Header
-            packet.Add(0x01);                                    // fixed field
-            packet.Add((byte)BootloaderCommand.WriteMemory);     // Command
+                List<byte> packet = new List<byte>();
+                packet.Add(0x7F);
+                packet.Add((byte)(9+bytesToSend));
+                packet.Add((byte)BootloaderCommand.WriteMemory);
+                packet.AddRange(addr);
+                packet.Add(addrCRC);
+                packet.Add((byte)(bytesToSend - 1));
+                packet.AddRange(chunk);
+                packet.Add(dataCRC);
 
-            // Address bytes (big-endian)
-            byte b3 = (byte)((startAddress >> 24) & 0xFF);
-            byte b4 = (byte)((startAddress >> 16) & 0xFF);
-            byte b5 = (byte)((startAddress >> 8) & 0xFF);
-            byte b6 = (byte)(startAddress & 0xFF);
-            byte[] addr = { b3, b4, b5, b6 };
-            packet.AddRange(addr);
+                // Total bytes as 4 bytes big-endian
+                packet.Add((byte)((totalBytes >> 24) & 0xFF));
+                packet.Add((byte)((totalBytes >> 16) & 0xFF));
+                packet.Add((byte)((totalBytes >> 8) & 0xFF));
+                packet.Add((byte)(totalBytes & 0xFF));
 
-            byte addrCRC = CalculateCRC8(addr);
-            packet.Add(addrCRC);
-
-            packet.Add((byte)length);       // data length
-
-            packet.AddRange(dataBytes);     // all data bytes
-
-            byte dataCRC = CalculateCRC8(dataBytes);
-            packet.Add(dataCRC);
-
-            if (serialPort1.IsOpen)
-            {
                 serialPort1.Write(packet.ToArray(), 0, packet.Count);
-                serialPort1.Write("\r\n");
+                serialPort1.Write("\r");
+                serialPort1.Write("\n");
+
+                await Task.Delay(50);
+
+                offset += bytesToSend;
+                blockNum++;
+
+                int progress = (int)((double)offset / totalBytes * 100);
+                progbarWriteMem.Value = Math.Min(progress, 100);
             }
+
+            btnWriteMem.Enabled = true;
+            MessageBox.Show($"Done! {blockNum} blocks written successfully.", "Success");
         }
     }
 }
