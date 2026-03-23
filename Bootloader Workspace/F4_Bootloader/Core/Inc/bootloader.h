@@ -8,7 +8,8 @@
 #ifndef INC_BOOTLOADER_H_
 #define INC_BOOTLOADER_H_
 
-#include "main.h"
+#include "stm32f4xx_hal.h"
+#include <stdint.h>
 
 #define BOOTLOADER_HEADER			0x7F
 #define APPLICATION_HEADER			0x7E
@@ -38,6 +39,8 @@
 
 #define SRAM2_END					0x2001FFFF
 
+typedef int (*UART_Transmit_FuncPtr_t)(uint8_t* data, uint32_t size);
+
 void processBootloaderCommand(char* buffer);
 void handleGetVersion(void);
 void handleGetHelp(void);
@@ -47,12 +50,9 @@ int handleGoToAddress(char* buffer);
 void GoToAddress(uint32_t address);
 int handleWriteMemory(char* buffer);
 int WriteMemory(uint32_t address);
-
+void Bootloader_Init(UART_Transmit_FuncPtr_t p_uart_transmit_func);
 uint8_t CalculateCRC8(uint8_t* data, uint32_t length);
 
-extern int test;
-
-extern uint8_t response_get_version[2];
 
 
 #endif /* INC_BOOTLOADER_H_ */

@@ -7,7 +7,8 @@
 
 #include "bootloader.h"
 
-int test = 0;
+static UART_Transmit_FuncPtr_t p_UART_Tx_Func = NULL;
+
 uint8_t commands[NUM_OF_COMMANDS] = {
 		GET_HELP,
 		GET_VERSION,
@@ -27,6 +28,18 @@ uint8_t response_read_mem[RESPONSE_READ_MEM_SIZE] = {0};
 uint8_t response_go_to_address[1] = {0};
 uint8_t response_write_memory[1] = {0};
 
+void Bootloader_Init(UART_Transmit_FuncPtr_t p_uart_transmit_func)
+{
+    p_UART_Tx_Func = p_uart_transmit_func;
+}
+
+void bootloader_send_response(uint8_t* response_data, uint32_t size)
+{
+    if (p_UART_Tx_Func != NULL)
+    {
+        p_UART_Tx_Func(response_data, size);
+    }
+}
 void processBootloaderCommand(char* buffer)
 {
 	uint8_t command = buffer[2];
@@ -64,7 +77,7 @@ void handleGetVersion(void)
 		response_get_version[0] = NACK;
 		response_get_version[1] = UNKNOWN;
 	}
-	uartTransmit(UART_PORT, response_get_version, RESPONSE_GET_VERSION_SIZE);
+	bootloader_send_response(response_get_version, RESPONSE_GET_VERSION_SIZE);
 }
 
 
@@ -79,7 +92,7 @@ void handleGetHelp(void)
 		response_get_help[i+3] = commands[i];
 	}
 
-	uartTransmit(UART_PORT, response_get_help, RESPONSE_GET_HELP_SIZE);
+	bootloader_send_response(response_get_help, RESPONSE_GET_HELP_SIZE);
 }
 
 void handleGetID(void)
@@ -89,7 +102,7 @@ void handleGetID(void)
 	response_get_id[2] = 0x04;
 	response_get_id[3] = DEVICE_ID;
 
-	uartTransmit(UART_PORT, response_get_id, RESPONSE_GET_ID_SIZE);
+	bootloader_send_response(response_get_id, RESPONSE_GET_ID_SIZE);
 
 }
 
@@ -97,7 +110,8 @@ int handleReadMem(char* buffer)
 {
 	uint8_t addrBytes[4] = {buffer[3],buffer[4],buffer[5],buffer[6]};
 	uint8_t crc_received = buffer[7];
-	uint8_t numBytesToRead = buffer[8];
+	uint8_t length = buffer[8];
+	uint8_t compOfLength = buffer[9];
 
 	uint8_t crc_calculated = {0};
 	uint32_t address = (((uint32_t)buffer[3] << 24) | ((uint32_t)buffer[4] << 16) | ((uint32_t)buffer[5] << 8)  | ((uint32_t)buffer[6]));
@@ -105,26 +119,26 @@ int handleReadMem(char* buffer)
 
 	crc_calculated = CalculateCRC8(addrBytes, 4);
 
-	if (crc_received != crc_calculated)
+	if (((crc_received != crc_calculated) || (length != (uint8_t)~compOfLength))) // cast edildi cunku ~int tipinde karsilastirir
 	{
 		response_read_mem[0] = NACK;
-		uartTransmit(UART_PORT, response_read_mem, 1);
+		bootloader_send_response(response_read_mem, 1);
 		return -1;
 	}
 
 	if( !((address >= FLASH_BASE && address <= FLASH_END ) || (address >= SRAM1_BASE && address <= SRAM2_END )) )
 	{
 		response_read_mem[0] = NACK;
-		uartTransmit(UART_PORT, response_read_mem, 1);
+		bootloader_send_response(response_read_mem, 1);
 		return -1;
 	}
 	response_read_mem[0] = ACK;
 
-	for(int i = 0; i <= numBytesToRead; i++ )
+	for(int i = 0; i <= length; i++ )
 	{
 		response_read_mem[i+1] = mem_ptr[i];
 	}
-	uartTransmit(UART_PORT, response_read_mem, (numBytesToRead + 1));
+	bootloader_send_response(response_read_mem, (length + 1));
 
 	return 1;
 }
@@ -142,24 +156,21 @@ int handleGoToAddress(char* buffer)
 	if (crc_received != crc_calculated)
 	{
 		response_go_to_address[0] = NACK;
-		uartTransmit(UART_PORT, response_go_to_address, 1);
+		bootloader_send_response(response_go_to_address, 1);
 		return -1;
 	}
 
 	if( !((address >= FLASH_BASE && address <= FLASH_END ) || (address >= SRAM1_BASE && address <= SRAM2_END )) )
 	{
 		response_go_to_address[0] = NACK;
-		uartTransmit(UART_PORT, response_go_to_address, 1);
+		bootloader_send_response(response_go_to_address, 1);
 		return -1;
 	}
 	response_go_to_address[0] = ACK;
 
-	uartTransmit(UART_PORT, response_go_to_address, 1);
+	bootloader_send_response(response_go_to_address, 1);
 
-	extern volatile uint8_t jumpFlag;
-	extern volatile uint32_t jumpAddress;
-	jumpAddress = address;
-	jumpFlag = 1;
+	GoToAddress(address);
 
 	return 1;
 }
@@ -167,55 +178,16 @@ int handleGoToAddress(char* buffer)
 
 int handleWriteMemory(char* buffer)
 {
-	uint8_t addrBytes[4] = {buffer[3],buffer[4],buffer[5],buffer[6]};
-	uint8_t dataLength = (buffer[8] - 1);
-	uint8_t crcData_received = buffer[8+dataLength+2];
-	uint8_t crcAddr_received = buffer[7];
-	uint8_t dataBytes[dataLength] = {0};
-
-	for(int i = 0; i <= dataLength; i++)
-	{
-		dataBytes[i] = buffer[i + 9];
-	}
-
-	uint8_t crcAddr_calculated = CalculateCRC8(addrBytes, 4);
-	uint8_t crcData_calculated = CalculateCRC8(dataBytes, dataLength);
-
-	uint32_t address = (((uint32_t)buffer[3] << 24) | ((uint32_t)buffer[4] << 16) | ((uint32_t)buffer[5] << 8)  | ((uint32_t)buffer[6]));
-
-
-	if (((crcAddr_calculated != crcAddr_received) || (crcData_calculated != crcData_received)))
-	{
-		response_write_memory[0] = NACK;
-		uartTransmit(UART_PORT, response_write_memory, 1);
-		return -1;
-	}
-
-	if( !((address >= FLASH_BASE && address <= FLASH_END ) || (address >= SRAM1_BASE && address <= SRAM2_END )) )
-	{
-		response_write_memory[0] = NACK;
-		uartTransmit(UART_PORT, response_write_memory, 1);
-		return -1;
-	}
-
-	response_write_memory[0] = ACK;
-
-	if(WriteMemory(address) == 1)
-	{
-		uartTransmit(UART_PORT, response_write_memory, 1);
-		return 1;
-	}
+	return 1;
 }
 
 void GoToAddress(uint32_t address)
 {
 	// deinitilize peripherals
-	HAL_GPIO_DeInit(LED_GPIO_Port, LED_Pin);
-	HAL_GPIO_DeInit(BUTTON_GPIO_Port, BUTTON_Pin);
-	HAL_UART_DeInit(&huart1);
-	HAL_UART_DeInit(&huart2);
-	HAL_RCC_DeInit();
 	HAL_DeInit();
+
+	// deinitilize clock
+	HAL_RCC_DeInit();
 
 	SysTick->CTRL = 0;
 	SysTick->LOAD = 0;
