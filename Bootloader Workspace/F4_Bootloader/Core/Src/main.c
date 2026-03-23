@@ -56,7 +56,17 @@ uint8_t rxChar;
 uint8_t bufferIndex;
 char messageBuffer[BUFFER_SIZE];
 volatile uint8_t jumpFlag = 0;
+volatile uint8_t packetReadyFlag = 0;
 volatile uint32_t jumpAddress = 0;
+uint8_t expectedLen = 0;
+
+enum
+{
+	WAIT_HEADER,
+	WAIT_LENGTH,
+	RECEIVING
+}rxState;
+
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -67,7 +77,6 @@ static void MX_USART1_UART_Init(void);
 /* USER CODE BEGIN PFP */
 int _write(int file, char *ptr, int len);
 void JumpToApplication(void);
-
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
@@ -129,7 +138,7 @@ int main(void)
   HAL_Init();
 
   /* USER CODE BEGIN Init */
-
+  Bootloader_Init(uartTransmit);
   /* USER CODE END Init */
 
   /* Configure the system clock */
@@ -165,9 +174,10 @@ int main(void)
 		  JumpToApplication();
 	  }
 
-	if(jumpFlag)  // <-- jump happens in main context, not IRQ
+	if(packetReadyFlag)
 	{
-		GoToAddress(jumpAddress);
+		packetReadyFlag = 0;
+		processBootloaderCommand(messageBuffer);
 	}
   }
   //HAL_NVIC_SystemReset()
@@ -327,27 +337,45 @@ static void MX_GPIO_Init(void)
 /* USER CODE BEGIN 4 */
 void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 {
-	if(huart == UART_PORT)
+	if(huart != UART_PORT)
 	{
-		if(bufferIndex < BUFFER_SIZE - 1)
-		{
-			messageBuffer[bufferIndex++] = rxChar;
-			messageBuffer[bufferIndex] = '\0';
-		}
-		if(bufferIndex >= 2 && messageBuffer[bufferIndex-2] == '\r' && messageBuffer[bufferIndex-1] == '\n')
-		{
-			processBootloaderCommand(messageBuffer);
-			bufferIndex = 0;
-		}
+		return;
+	}
 
+	switch (rxState) {
+		case WAIT_HEADER:
+			if (rxChar == 0x7F)
+			{
+				messageBuffer[0] = rxChar;
+				bufferIndex = 1;
+				rxState = WAIT_LENGTH;
+			}
+			break;
+		case WAIT_LENGTH:
+			messageBuffer[bufferIndex++] = rxChar;
+			expectedLen = rxChar;
+			rxState = RECEIVING;
+			break;
+		case RECEIVING:
+			messageBuffer[bufferIndex++] = rxChar;
+			expectedLen--;
+			if(expectedLen == 0)
+			{
+		        packetReadyFlag = 1;
+		        bufferIndex = 0;
+		        rxState = WAIT_HEADER;
+			}
+			break;
+		default:
+			break;
 	}
 	HAL_UART_Receive_IT(huart, &rxChar, 1);
 }
 
-int uartTransmit(UART_HandleTypeDef* uart_port, uint8_t* message, int size)
+int uartTransmit(uint8_t* message, uint32_t size)
 {
 	HAL_StatusTypeDef status;
-	status = HAL_UART_Transmit_IT(uart_port, message, size);
+	status = HAL_UART_Transmit_IT(UART_PORT, message, size);
 	if (status == HAL_OK)
 	{
 		return 1;
