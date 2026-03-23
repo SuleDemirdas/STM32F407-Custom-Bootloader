@@ -25,6 +25,7 @@ uint8_t response_get_help[RESPONSE_GET_HELP_SIZE] = {0};
 uint8_t response_get_id[RESPONSE_GET_ID_SIZE] = {0};
 uint8_t response_read_mem[RESPONSE_READ_MEM_SIZE] = {0};
 uint8_t response_go_to_address[1] = {0};
+uint8_t response_write_memory[1] = {0};
 
 void processBootloaderCommand(char* buffer)
 {
@@ -46,6 +47,8 @@ void processBootloaderCommand(char* buffer)
 		case GO_TO_ADDRESS:
 			handleGoToAddress(buffer);
 			break;
+		case WRITE_MEMORY:
+			handleWriteMemory(buffer);
 		default:
 			break;
 	}
@@ -161,6 +164,49 @@ int handleGoToAddress(char* buffer)
 	return 1;
 }
 
+
+int handleWriteMemory(char* buffer)
+{
+	uint8_t addrBytes[4] = {buffer[3],buffer[4],buffer[5],buffer[6]};
+	uint8_t dataLength = (buffer[8] - 1);
+	uint8_t crcData_received = buffer[8+dataLength+2];
+	uint8_t crcAddr_received = buffer[7];
+	uint8_t dataBytes[dataLength] = {0};
+
+	for(int i = 0; i <= dataLength; i++)
+	{
+		dataBytes[i] = buffer[i + 9];
+	}
+
+	uint8_t crcAddr_calculated = CalculateCRC8(addrBytes, 4);
+	uint8_t crcData_calculated = CalculateCRC8(dataBytes, dataLength);
+
+	uint32_t address = (((uint32_t)buffer[3] << 24) | ((uint32_t)buffer[4] << 16) | ((uint32_t)buffer[5] << 8)  | ((uint32_t)buffer[6]));
+
+
+	if (((crcAddr_calculated != crcAddr_received) || (crcData_calculated != crcData_received)))
+	{
+		response_write_memory[0] = NACK;
+		uartTransmit(UART_PORT, response_write_memory, 1);
+		return -1;
+	}
+
+	if( !((address >= FLASH_BASE && address <= FLASH_END ) || (address >= SRAM1_BASE && address <= SRAM2_END )) )
+	{
+		response_write_memory[0] = NACK;
+		uartTransmit(UART_PORT, response_write_memory, 1);
+		return -1;
+	}
+
+	response_write_memory[0] = ACK;
+
+	if(WriteMemory(address) == 1)
+	{
+		uartTransmit(UART_PORT, response_write_memory, 1);
+		return 1;
+	}
+}
+
 void GoToAddress(uint32_t address)
 {
 	// deinitilize peripherals
@@ -183,6 +229,11 @@ void GoToAddress(uint32_t address)
 
     AppResetHandler = (void (*)(void))reset_handler_addr;
     AppResetHandler();
+}
+
+int WriteMemory(uint32_t address)
+{
+	return 1;
 }
 
 uint8_t CalculateCRC8(uint8_t* data, uint32_t length)

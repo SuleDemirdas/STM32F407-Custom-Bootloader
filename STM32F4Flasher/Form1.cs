@@ -340,6 +340,79 @@ namespace STM32F4Flasher
 
             }
         }
-    }
 
+        private void btnWriteMem_Click(object sender, EventArgs e)
+        {
+            if (string.IsNullOrWhiteSpace(txtBox_writeMemAddr.Text) ||
+                string.IsNullOrWhiteSpace(txtbox_writeMemLength.Text) ||
+                string.IsNullOrWhiteSpace(txtBoxWriteMemData.Text))
+            {
+                MessageBox.Show("Please enter address, length and data.", "Warning");
+                return;
+            }
+
+            if (!uint.TryParse(txtBox_writeMemAddr.Text,
+                System.Globalization.NumberStyles.HexNumber, null, out uint startAddress))
+            {
+                MessageBox.Show("Invalid address. Enter hex e.g. 08008000");
+                return;
+            }
+
+            if (!int.TryParse(txtbox_writeMemLength.Text, out int length) || length < 1 || length > 256)
+            {
+                MessageBox.Show("Invalid length. Enter 1-256.");
+                return;
+            }
+
+            // Parse hex string into byte array
+            string hexData = txtBoxWriteMemData.Text.Replace(" ", "");
+            if (hexData.Length % 2 != 0)
+            {
+                MessageBox.Show("Data hex string must have even number of characters.");
+                return;
+            }
+
+            byte[] dataBytes = new byte[hexData.Length / 2];
+            for (int i = 0; i < dataBytes.Length; i++)
+            {
+                dataBytes[i] = Convert.ToByte(hexData.Substring(i * 2, 2), 16);
+            }
+
+            if (dataBytes.Length != length)
+            {
+                MessageBox.Show($"Data length mismatch. Expected {length} bytes, got {dataBytes.Length}.");
+                return;
+            }
+
+            // Build packet
+            List<byte> packet = new List<byte>();
+            packet.Add(0x7F);                                    // Header
+            packet.Add(0x01);                                    // fixed field
+            packet.Add((byte)BootloaderCommand.WriteMemory);     // Command
+
+            // Address bytes (big-endian)
+            byte b3 = (byte)((startAddress >> 24) & 0xFF);
+            byte b4 = (byte)((startAddress >> 16) & 0xFF);
+            byte b5 = (byte)((startAddress >> 8) & 0xFF);
+            byte b6 = (byte)(startAddress & 0xFF);
+            byte[] addr = { b3, b4, b5, b6 };
+            packet.AddRange(addr);
+
+            byte addrCRC = CalculateCRC8(addr);
+            packet.Add(addrCRC);
+
+            packet.Add((byte)length);       // data length
+
+            packet.AddRange(dataBytes);     // all data bytes
+
+            byte dataCRC = CalculateCRC8(dataBytes);
+            packet.Add(dataCRC);
+
+            if (serialPort1.IsOpen)
+            {
+                serialPort1.Write(packet.ToArray(), 0, packet.Count);
+                serialPort1.Write("\r\n");
+            }
+        }
+    }
 }
