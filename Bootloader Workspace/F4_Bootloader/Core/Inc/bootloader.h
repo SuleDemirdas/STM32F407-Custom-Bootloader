@@ -36,6 +36,7 @@
 #define RESPONSE_GET_VERSION_SIZE	2
 #define RESPONSE_GET_ID_SIZE		4
 #define RESPONSE_READ_MEM_SIZE      257
+#define WRITE_MEM_BLOCK_SIZE		64
 
 #define SRAM2_END					0x2001FFFF
 
@@ -49,7 +50,6 @@ int handleReadMem(char* buffer);
 int handleGoToAddress(char* buffer);
 void GoToAddress(uint32_t address);
 int handleWriteMemory(char* buffer);
-int WriteMemory(uint32_t address);
 void Bootloader_Init(UART_Transmit_FuncPtr_t p_uart_transmit_func);
 uint8_t CalculateCRC8(uint8_t* data, uint32_t length);
 

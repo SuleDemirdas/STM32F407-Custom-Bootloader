@@ -8,7 +8,7 @@
 #include "bootloader.h"
 
 static UART_Transmit_FuncPtr_t p_UART_Tx_Func = NULL;
-
+int test = 0;
 uint8_t commands[NUM_OF_COMMANDS] = {
 		GET_HELP,
 		GET_VERSION,
@@ -178,8 +178,59 @@ int handleGoToAddress(char* buffer)
 
 int handleWriteMemory(char* buffer)
 {
+	uint8_t offset = 9;
+	uint8_t addrBytes[4] = {buffer[3],buffer[4],buffer[5],buffer[6]};
+	uint8_t addr_crc_received = buffer[7];
+	uint8_t dataLength = buffer[8]+1;
+	uint8_t data_crc_received = buffer[offset+dataLength];
+	uint8_t received_data_bytes[WRITE_MEM_BLOCK_SIZE] = {0};
+
+	uint8_t data_crc_calculated = {0};
+	uint8_t addr_crc_calculated = {0};
+	uint32_t address = (((uint32_t)buffer[3] << 24) | ((uint32_t)buffer[4] << 16) | ((uint32_t)buffer[5] << 8)  | ((uint32_t)buffer[6]));
+
+	for(int i = 0; i < dataLength; i++ )
+	{
+		received_data_bytes[i] = buffer[i+offset];
+	}
+
+	addr_crc_calculated = CalculateCRC8(addrBytes, 4);
+	data_crc_calculated = CalculateCRC8(received_data_bytes, dataLength);
+
+	if (((addr_crc_received != addr_crc_calculated) || (data_crc_received != data_crc_calculated)))
+	{
+		response_write_memory[0] = NACK;
+		bootloader_send_response(response_write_memory, 1);
+		return -1;
+	}
+
+	if( !((address >= FLASH_BASE && address <= FLASH_END ) || (address >= SRAM1_BASE && address <= SRAM2_END )) )
+	{
+		response_write_memory[0] = NACK;
+		bootloader_send_response(response_write_memory, 1);
+		return -1;
+	}
+
+    HAL_FLASH_Unlock();
+
+    for(int i = 0; i < dataLength; i++)
+    {
+        if(HAL_FLASH_Program(FLASH_TYPEPROGRAM_BYTE, address + i, received_data_bytes[i]) != HAL_OK)
+        {
+            HAL_FLASH_Lock();
+            response_write_memory[0] = NACK;
+            bootloader_send_response(response_write_memory, 1);
+            return -1;
+        }
+    }
+
+    HAL_FLASH_Lock();
+
+	response_write_memory[0] = ACK;
+	bootloader_send_response(response_write_memory, 1);
 	return 1;
 }
+
 
 void GoToAddress(uint32_t address)
 {
@@ -203,10 +254,6 @@ void GoToAddress(uint32_t address)
     AppResetHandler();
 }
 
-int WriteMemory(uint32_t address)
-{
-	return 1;
-}
 
 uint8_t CalculateCRC8(uint8_t* data, uint32_t length)
 {
