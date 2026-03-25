@@ -37,11 +37,14 @@
 #define RESPONSE_GET_ID_SIZE		4
 #define RESPONSE_READ_MEM_SIZE      257
 #define WRITE_MEM_BLOCK_SIZE		64
-
+#define MAX_NUM_OF_SECTORS			12
 #define SRAM2_END					0x2001FFFF
 
 typedef int (*UART_Transmit_FuncPtr_t)(uint8_t* data, uint32_t size);
 
+void Bootloader_Init(UART_Transmit_FuncPtr_t p_uart_transmit_func);
+uint8_t CalculateCRC8(uint8_t* data, uint32_t length);
+int EraseFlashSectors(uint8_t sector);
 void processBootloaderCommand(char* buffer);
 void handleGetVersion(void);
 void handleGetHelp(void);
@@ -50,9 +53,7 @@ int handleReadMem(char* buffer);
 int handleGoToAddress(char* buffer);
 void GoToAddress(uint32_t address);
 int handleWriteMemory(char* buffer);
-void Bootloader_Init(UART_Transmit_FuncPtr_t p_uart_transmit_func);
-uint8_t CalculateCRC8(uint8_t* data, uint32_t length);
-
+int handleErase(char* buffer);
 
 
 #endif /* INC_BOOTLOADER_H_ */

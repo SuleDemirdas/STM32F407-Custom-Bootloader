@@ -42,6 +42,21 @@
             comBoxComPort = new ComboBox();
             lblComPort = new Label();
             groupBox1 = new GroupBox();
+            checkboxMassErase = new CheckBox();
+            checkboxSector11 = new CheckBox();
+            checkboxSector10 = new CheckBox();
+            checkboxSector9 = new CheckBox();
+            checkboxSector8 = new CheckBox();
+            checkboxSector7 = new CheckBox();
+            checkboxSector6 = new CheckBox();
+            checkboxSector5 = new CheckBox();
+            checkboxSector4 = new CheckBox();
+            checkboxSector3 = new CheckBox();
+            checkboxSector2 = new CheckBox();
+            checkboxSector1 = new CheckBox();
+            checkBoxSec0 = new CheckBox();
+            btn_erase = new Button();
+            progbarWriteMem = new ProgressBar();
             btnBrowse = new Button();
             txtBoxBinFile = new TextBox();
             txtBox_writeMemAddr = new TextBox();
@@ -59,7 +74,6 @@
             btnclear = new Button();
             txtReceiveMessage = new TextBox();
             getVersion = new Button();
-            progbarWriteMem = new ProgressBar();
             Connection.SuspendLayout();
             groupBox1.SuspendLayout();
             SuspendLayout();
@@ -206,6 +220,20 @@
             // 
             // groupBox1
             // 
+            groupBox1.Controls.Add(checkboxMassErase);
+            groupBox1.Controls.Add(checkboxSector11);
+            groupBox1.Controls.Add(checkboxSector10);
+            groupBox1.Controls.Add(checkboxSector9);
+            groupBox1.Controls.Add(checkboxSector8);
+            groupBox1.Controls.Add(checkboxSector7);
+            groupBox1.Controls.Add(checkboxSector6);
+            groupBox1.Controls.Add(checkboxSector5);
+            groupBox1.Controls.Add(checkboxSector4);
+            groupBox1.Controls.Add(checkboxSector3);
+            groupBox1.Controls.Add(checkboxSector2);
+            groupBox1.Controls.Add(checkboxSector1);
+            groupBox1.Controls.Add(checkBoxSec0);
+            groupBox1.Controls.Add(btn_erase);
             groupBox1.Controls.Add(progbarWriteMem);
             groupBox1.Controls.Add(btnBrowse);
             groupBox1.Controls.Add(txtBoxBinFile);
@@ -226,10 +254,159 @@
             groupBox1.Controls.Add(getVersion);
             groupBox1.Location = new Point(351, 18);
             groupBox1.Name = "groupBox1";
-            groupBox1.Size = new Size(800, 489);
+            groupBox1.Size = new Size(830, 489);
             groupBox1.TabIndex = 1;
             groupBox1.TabStop = false;
             groupBox1.Text = "Commands";
+            // 
+            // checkboxMassErase
+            // 
+            checkboxMassErase.AutoSize = true;
+            checkboxMassErase.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
+            checkboxMassErase.Location = new Point(719, 303);
+            checkboxMassErase.Name = "checkboxMassErase";
+            checkboxMassErase.Size = new Size(108, 24);
+            checkboxMassErase.TabIndex = 40;
+            checkboxMassErase.Text = "Mass Erase";
+            checkboxMassErase.UseVisualStyleBackColor = true;
+            checkboxMassErase.CheckedChanged += checkboxMassErase_CheckedChanged;
+            // 
+            // checkboxSector11
+            // 
+            checkboxSector11.AutoSize = true;
+            checkboxSector11.Location = new Point(628, 333);
+            checkboxSector11.Name = "checkboxSector11";
+            checkboxSector11.Size = new Size(93, 24);
+            checkboxSector11.TabIndex = 39;
+            checkboxSector11.Text = "Sector 11";
+            checkboxSector11.UseVisualStyleBackColor = true;
+            // 
+            // checkboxSector10
+            // 
+            checkboxSector10.AutoSize = true;
+            checkboxSector10.Location = new Point(537, 334);
+            checkboxSector10.Name = "checkboxSector10";
+            checkboxSector10.Size = new Size(93, 24);
+            checkboxSector10.TabIndex = 38;
+            checkboxSector10.Text = "Sector 10";
+            checkboxSector10.UseVisualStyleBackColor = true;
+            // 
+            // checkboxSector9
+            // 
+            checkboxSector9.AutoSize = true;
+            checkboxSector9.Location = new Point(446, 333);
+            checkboxSector9.Name = "checkboxSector9";
+            checkboxSector9.Size = new Size(85, 24);
+            checkboxSector9.TabIndex = 37;
+            checkboxSector9.Text = "Sector 9";
+            checkboxSector9.UseVisualStyleBackColor = true;
+            // 
+            // checkboxSector8
+            // 
+            checkboxSector8.AutoSize = true;
+            checkboxSector8.Location = new Point(355, 334);
+            checkboxSector8.Name = "checkboxSector8";
+            checkboxSector8.Size = new Size(85, 24);
+            checkboxSector8.TabIndex = 36;
+            checkboxSector8.Text = "Sector 8";
+            checkboxSector8.UseVisualStyleBackColor = true;
+            // 
+            // checkboxSector7
+            // 
+            checkboxSector7.AutoSize = true;
+            checkboxSector7.Location = new Point(264, 333);
+            checkboxSector7.Name = "checkboxSector7";
+            checkboxSector7.Size = new Size(85, 24);
+            checkboxSector7.TabIndex = 35;
+            checkboxSector7.Text = "Sector 7";
+            checkboxSector7.UseVisualStyleBackColor = true;
+            // 
+            // checkboxSector6
+            // 
+            checkboxSector6.AutoSize = true;
+            checkboxSector6.Location = new Point(158, 333);
+            checkboxSector6.Name = "checkboxSector6";
+            checkboxSector6.Size = new Size(85, 24);
+            checkboxSector6.TabIndex = 34;
+            checkboxSector6.Text = "Sector 6";
+            checkboxSector6.UseVisualStyleBackColor = true;
+            // 
+            // checkboxSector5
+            // 
+            checkboxSector5.AutoSize = true;
+            checkboxSector5.Location = new Point(628, 303);
+            checkboxSector5.Name = "checkboxSector5";
+            checkboxSector5.Size = new Size(85, 24);
+            checkboxSector5.TabIndex = 33;
+            checkboxSector5.Text = "Sector 5";
+            checkboxSector5.UseVisualStyleBackColor = true;
+            // 
+            // checkboxSector4
+            // 
+            checkboxSector4.AutoSize = true;
+            checkboxSector4.Location = new Point(537, 304);
+            checkboxSector4.Name = "checkboxSector4";
+            checkboxSector4.Size = new Size(85, 24);
+            checkboxSector4.TabIndex = 32;
+            checkboxSector4.Text = "Sector 4";
+            checkboxSector4.UseVisualStyleBackColor = true;
+            // 
+            // checkboxSector3
+            // 
+            checkboxSector3.AutoSize = true;
+            checkboxSector3.Location = new Point(446, 303);
+            checkboxSector3.Name = "checkboxSector3";
+            checkboxSector3.Size = new Size(85, 24);
+            checkboxSector3.TabIndex = 31;
+            checkboxSector3.Text = "Sector 3";
+            checkboxSector3.UseVisualStyleBackColor = true;
+            // 
+            // checkboxSector2
+            // 
+            checkboxSector2.AutoSize = true;
+            checkboxSector2.Location = new Point(355, 304);
+            checkboxSector2.Name = "checkboxSector2";
+            checkboxSector2.Size = new Size(85, 24);
+            checkboxSector2.TabIndex = 30;
+            checkboxSector2.Text = "Sector 2";
+            checkboxSector2.UseVisualStyleBackColor = true;
+            // 
+            // checkboxSector1
+            // 
+            checkboxSector1.AutoSize = true;
+            checkboxSector1.Location = new Point(264, 303);
+            checkboxSector1.Name = "checkboxSector1";
+            checkboxSector1.Size = new Size(85, 24);
+            checkboxSector1.TabIndex = 29;
+            checkboxSector1.Text = "Sector 1";
+            checkboxSector1.UseVisualStyleBackColor = true;
+            // 
+            // checkBoxSec0
+            // 
+            checkBoxSec0.AutoSize = true;
+            checkBoxSec0.Location = new Point(158, 303);
+            checkBoxSec0.Name = "checkBoxSec0";
+            checkBoxSec0.Size = new Size(85, 24);
+            checkBoxSec0.TabIndex = 28;
+            checkBoxSec0.Text = "Sector 0";
+            checkBoxSec0.UseVisualStyleBackColor = true;
+            // 
+            // btn_erase
+            // 
+            btn_erase.Location = new Point(27, 304);
+            btn_erase.Name = "btn_erase";
+            btn_erase.Size = new Size(102, 29);
+            btn_erase.TabIndex = 27;
+            btn_erase.Text = "ERASE";
+            btn_erase.UseVisualStyleBackColor = true;
+            btn_erase.Click += btn_erase_Click;
+            // 
+            // progbarWriteMem
+            // 
+            progbarWriteMem.Location = new Point(673, 270);
+            progbarWriteMem.Name = "progbarWriteMem";
+            progbarWriteMem.Size = new Size(146, 26);
+            progbarWriteMem.TabIndex = 10;
             // 
             // btnBrowse
             // 
@@ -287,7 +464,7 @@
             // 
             // btnSave
             // 
-            btnSave.Location = new Point(676, 164);
+            btnSave.Location = new Point(728, 164);
             btnSave.Name = "btnSave";
             btnSave.Size = new Size(94, 29);
             btnSave.TabIndex = 20;
@@ -361,7 +538,7 @@
             // 
             // btnclear
             // 
-            btnclear.Location = new Point(562, 164);
+            btnclear.Location = new Point(619, 164);
             btnclear.Name = "btnclear";
             btnclear.Size = new Size(94, 29);
             btnclear.TabIndex = 12;
@@ -371,7 +548,7 @@
             // 
             // txtReceiveMessage
             // 
-            txtReceiveMessage.Location = new Point(414, 29);
+            txtReceiveMessage.Location = new Point(466, 26);
             txtReceiveMessage.Multiline = true;
             txtReceiveMessage.Name = "txtReceiveMessage";
             txtReceiveMessage.Size = new Size(356, 125);
@@ -388,18 +565,11 @@
             getVersion.UseVisualStyleBackColor = true;
             getVersion.Click += getVersion_Click;
             // 
-            // progbarWriteMem
-            // 
-            progbarWriteMem.Location = new Point(676, 268);
-            progbarWriteMem.Name = "progbarWriteMem";
-            progbarWriteMem.Size = new Size(94, 29);
-            progbarWriteMem.TabIndex = 10;
-            // 
             // STM32F4Flasher
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(1163, 650);
+            ClientSize = new Size(1193, 650);
             Controls.Add(groupBox1);
             Controls.Add(Connection);
             Name = "STM32F4Flasher";
@@ -446,5 +616,19 @@
         private Button btnBrowse;
         private TextBox txtBoxBinFile;
         private ProgressBar progbarWriteMem;
+        private Button btn_erase;
+        private CheckBox checkboxSector11;
+        private CheckBox checkboxSector10;
+        private CheckBox checkboxSector9;
+        private CheckBox checkboxSector8;
+        private CheckBox checkboxSector7;
+        private CheckBox checkboxSector6;
+        private CheckBox checkboxSector5;
+        private CheckBox checkboxSector4;
+        private CheckBox checkboxSector3;
+        private CheckBox checkboxSector2;
+        private CheckBox checkboxSector1;
+        private CheckBox checkBoxSec0;
+        private CheckBox checkboxMassErase;
     }
 }

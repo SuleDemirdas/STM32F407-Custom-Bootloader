@@ -3,6 +3,7 @@ using System.IO.Ports;
 using System.Net.Sockets;
 using System.Windows.Forms;
 using static System.Runtime.InteropServices.JavaScript.JSType;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.ProgressBar;
 
 namespace STM32F4Flasher
 {
@@ -430,7 +431,7 @@ namespace STM32F4Flasher
 
                 List<byte> packet = new List<byte>();
                 packet.Add(0x7F);
-                packet.Add((byte)(9+bytesToSend));
+                packet.Add((byte)(9 + bytesToSend));
                 packet.Add((byte)BootloaderCommand.WriteMemory);
                 packet.AddRange(addr);
                 packet.Add(addrCRC);
@@ -459,6 +460,61 @@ namespace STM32F4Flasher
 
             btnWriteMem.Enabled = true;
             MessageBox.Show($"Done! {blockNum} blocks written successfully.", "Success");
+        }
+
+        private void checkboxMassErase_CheckedChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void btn_erase_Click(object sender, EventArgs e)
+        {
+            List<byte> selectedSectors = new List<byte>();
+            if (checkBoxSec0.Checked) selectedSectors.Add(0x00);
+            if (checkboxSector1.Checked) selectedSectors.Add(0x01);
+            if (checkboxSector2.Checked) selectedSectors.Add(0x02);
+            if (checkboxSector3.Checked) selectedSectors.Add(0x03);
+            if (checkboxSector4.Checked) selectedSectors.Add(0x04);
+            if (checkboxSector5.Checked) selectedSectors.Add(0x05);
+            if (checkboxSector6.Checked) selectedSectors.Add(0x06);
+            if (checkboxSector7.Checked) selectedSectors.Add(0x07);
+            if (checkboxSector8.Checked) selectedSectors.Add(0x08);
+            if (checkboxSector9.Checked) selectedSectors.Add(0x09);
+            if (checkboxSector10.Checked) selectedSectors.Add(0x0A);
+            if (checkboxSector11.Checked) selectedSectors.Add(0x0B);
+
+            if (checkboxMassErase.Checked)
+            {
+                selectedSectors.Clear();
+                selectedSectors.Add(0xFF);
+            }
+
+            if (selectedSectors.Count == 0)
+            {
+                MessageBox.Show("Please select at least one sector to erase.", "Warning");
+                return;
+            }
+
+
+            byte selectedSectorNum = (byte)selectedSectors.Count;
+
+            List<byte> data = new List<byte>();
+            
+            data.Add(selectedSectorNum);
+            data.AddRange(selectedSectors);
+
+            byte crcSectors = CalculateCRC8(data.ToArray());
+            
+            List<byte> packet = new List<byte>();
+            packet.Add(0x7F);
+            packet.Add((byte)(selectedSectorNum + 3)); // len = cmd + numSectors + sectorList + crc
+            packet.Add((byte)BootloaderCommand.Erase);
+            packet.AddRange(data);
+            packet.Add((byte)(crcSectors));
+
+            serialPort1.Write(packet.ToArray(), 0, packet.Count);
+            serialPort1.Write("\r");
+            serialPort1.Write("\n");
         }
     }
 }

@@ -27,6 +27,7 @@ uint8_t response_get_id[RESPONSE_GET_ID_SIZE] = {0};
 uint8_t response_read_mem[RESPONSE_READ_MEM_SIZE] = {0};
 uint8_t response_go_to_address[1] = {0};
 uint8_t response_write_memory[1] = {0};
+uint8_t response_erase[1] = {0};
 
 void Bootloader_Init(UART_Transmit_FuncPtr_t p_uart_transmit_func)
 {
@@ -62,6 +63,8 @@ void processBootloaderCommand(char* buffer)
 			break;
 		case WRITE_MEMORY:
 			handleWriteMemory(buffer);
+		case ERASE:
+			handleErase(buffer);
 		default:
 			break;
 	}
@@ -254,6 +257,74 @@ void GoToAddress(uint32_t address)
     AppResetHandler();
 }
 
+int handleErase(char* buffer)
+{
+	uint8_t offset = 4;
+	uint8_t rx_numOfSectors = buffer[3];
+	uint8_t rx_sectors[MAX_NUM_OF_SECTORS + 1] = {0};
+	uint8_t crc_received = buffer[offset + rx_numOfSectors];
+
+	rx_sectors[0] = rx_numOfSectors;
+
+	for(int i = 0; i < rx_numOfSectors; i++)
+	{
+		rx_sectors[i + 1] = buffer[offset + i];
+	}
+
+	uint8_t crc_calculated = CalculateCRC8(rx_sectors, rx_numOfSectors + 1);
+
+	if(crc_received != crc_calculated)
+	{
+        response_erase[0] = NACK;
+        bootloader_send_response(response_erase, 1);
+        return -1;
+	}
+
+	for(int i = 0; i < rx_numOfSectors; i++)
+	{
+		if(EraseFlashSectors(rx_sectors[i+1]) == -1)
+		{
+			response_erase[0] = NACK;
+			bootloader_send_response(response_erase, 1);
+		}
+		response_erase[0] = ACK;
+		bootloader_send_response(response_erase, 1);
+	}
+	return 1;
+}
+
+int EraseFlashSectors(uint8_t sector)
+{
+	HAL_StatusTypeDef status;
+	uint32_t SectorError = {0};
+	FLASH_EraseInitTypeDef FLASH_Erase_Init;
+	FLASH_Erase_Init.VoltageRange = FLASH_VOLTAGE_RANGE_3;
+
+	HAL_FLASH_Unlock();
+
+	if (sector == 0xFF)
+	{
+		FLASH_Erase_Init.TypeErase = FLASH_TYPEERASE_MASSERASE;
+		status = HAL_FLASHEx_Erase(&FLASH_Erase_Init, &SectorError);
+	}
+	else
+	{
+		FLASH_Erase_Init.NbSectors = 1;
+		FLASH_Erase_Init.TypeErase = FLASH_TYPEERASE_SECTORS;
+		FLASH_Erase_Init.Sector = (uint32_t)sector;
+		status = HAL_FLASHEx_Erase(&FLASH_Erase_Init, &SectorError);
+	}
+	HAL_FLASH_Lock();
+
+	if (status == HAL_OK)
+	{
+		return 1;
+	}
+	else
+	{
+		return -1;
+	}
+}
 
 uint8_t CalculateCRC8(uint8_t* data, uint32_t length)
 {
