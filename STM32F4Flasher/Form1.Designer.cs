@@ -42,6 +42,21 @@
             comBoxComPort = new ComboBox();
             lblComPort = new Label();
             groupBox1 = new GroupBox();
+            combox_ReadL = new ComboBox();
+            btn_readoutL = new Button();
+            checkbox_wrp11 = new CheckBox();
+            checkbox_wrp10 = new CheckBox();
+            checkbox_wrp8 = new CheckBox();
+            checkbox_wrp9 = new CheckBox();
+            checkbox_wrp7 = new CheckBox();
+            checkbox_wrp6 = new CheckBox();
+            checkbox_wrp5 = new CheckBox();
+            checkbox_wrp4 = new CheckBox();
+            checkbox_wrp3 = new CheckBox();
+            checkbox_wrp2 = new CheckBox();
+            checkbox_wrp1 = new CheckBox();
+            checkbox_wrp0 = new CheckBox();
+            btn_write_p = new Button();
             checkboxMassErase = new CheckBox();
             checkboxSector11 = new CheckBox();
             checkboxSector10 = new CheckBox();
@@ -220,6 +235,21 @@
             // 
             // groupBox1
             // 
+            groupBox1.Controls.Add(combox_ReadL);
+            groupBox1.Controls.Add(btn_readoutL);
+            groupBox1.Controls.Add(checkbox_wrp11);
+            groupBox1.Controls.Add(checkbox_wrp10);
+            groupBox1.Controls.Add(checkbox_wrp8);
+            groupBox1.Controls.Add(checkbox_wrp9);
+            groupBox1.Controls.Add(checkbox_wrp7);
+            groupBox1.Controls.Add(checkbox_wrp6);
+            groupBox1.Controls.Add(checkbox_wrp5);
+            groupBox1.Controls.Add(checkbox_wrp4);
+            groupBox1.Controls.Add(checkbox_wrp3);
+            groupBox1.Controls.Add(checkbox_wrp2);
+            groupBox1.Controls.Add(checkbox_wrp1);
+            groupBox1.Controls.Add(checkbox_wrp0);
+            groupBox1.Controls.Add(btn_write_p);
             groupBox1.Controls.Add(checkboxMassErase);
             groupBox1.Controls.Add(checkboxSector11);
             groupBox1.Controls.Add(checkboxSector10);
@@ -258,6 +288,155 @@
             groupBox1.TabIndex = 1;
             groupBox1.TabStop = false;
             groupBox1.Text = "Commands";
+            // 
+            // combox_ReadL
+            // 
+            combox_ReadL.FormattingEnabled = true;
+            combox_ReadL.Items.AddRange(new object[] { "Level 0 (No Protection)", "Level 1 (Read Protection)", "Level 2 (Chip Protection - irreversible)" });
+            combox_ReadL.Location = new Point(157, 437);
+            combox_ReadL.Name = "combox_ReadL";
+            combox_ReadL.Size = new Size(283, 28);
+            combox_ReadL.TabIndex = 10;
+            combox_ReadL.Text = "Level 0 (No Protection)";
+            // 
+            // btn_readoutL
+            // 
+            btn_readoutL.Location = new Point(27, 436);
+            btn_readoutL.Name = "btn_readoutL";
+            btn_readoutL.Size = new Size(102, 29);
+            btn_readoutL.TabIndex = 54;
+            btn_readoutL.Text = "READOUT_L";
+            btn_readoutL.UseVisualStyleBackColor = true;
+            // 
+            // checkbox_wrp11
+            // 
+            checkbox_wrp11.AutoSize = true;
+            checkbox_wrp11.Location = new Point(628, 403);
+            checkbox_wrp11.Name = "checkbox_wrp11";
+            checkbox_wrp11.Size = new Size(78, 24);
+            checkbox_wrp11.TabIndex = 53;
+            checkbox_wrp11.Text = "WRP11";
+            checkbox_wrp11.UseVisualStyleBackColor = true;
+            // 
+            // checkbox_wrp10
+            // 
+            checkbox_wrp10.AutoSize = true;
+            checkbox_wrp10.Location = new Point(537, 404);
+            checkbox_wrp10.Name = "checkbox_wrp10";
+            checkbox_wrp10.Size = new Size(78, 24);
+            checkbox_wrp10.TabIndex = 52;
+            checkbox_wrp10.Text = "WRP10";
+            checkbox_wrp10.UseVisualStyleBackColor = true;
+            // 
+            // checkbox_wrp8
+            // 
+            checkbox_wrp8.AutoSize = true;
+            checkbox_wrp8.Location = new Point(355, 404);
+            checkbox_wrp8.Name = "checkbox_wrp8";
+            checkbox_wrp8.Size = new Size(70, 24);
+            checkbox_wrp8.TabIndex = 51;
+            checkbox_wrp8.Text = "WRP8";
+            checkbox_wrp8.UseVisualStyleBackColor = true;
+            // 
+            // checkbox_wrp9
+            // 
+            checkbox_wrp9.AutoSize = true;
+            checkbox_wrp9.Location = new Point(446, 404);
+            checkbox_wrp9.Name = "checkbox_wrp9";
+            checkbox_wrp9.Size = new Size(70, 24);
+            checkbox_wrp9.TabIndex = 50;
+            checkbox_wrp9.Text = "WRP9";
+            checkbox_wrp9.UseVisualStyleBackColor = true;
+            // 
+            // checkbox_wrp7
+            // 
+            checkbox_wrp7.AutoSize = true;
+            checkbox_wrp7.Location = new Point(264, 404);
+            checkbox_wrp7.Name = "checkbox_wrp7";
+            checkbox_wrp7.Size = new Size(70, 24);
+            checkbox_wrp7.TabIndex = 49;
+            checkbox_wrp7.Text = "WRP7";
+            checkbox_wrp7.UseVisualStyleBackColor = true;
+            // 
+            // checkbox_wrp6
+            // 
+            checkbox_wrp6.AutoSize = true;
+            checkbox_wrp6.Location = new Point(157, 404);
+            checkbox_wrp6.Name = "checkbox_wrp6";
+            checkbox_wrp6.Size = new Size(70, 24);
+            checkbox_wrp6.TabIndex = 48;
+            checkbox_wrp6.Text = "WRP6";
+            checkbox_wrp6.UseVisualStyleBackColor = true;
+            // 
+            // checkbox_wrp5
+            // 
+            checkbox_wrp5.AutoSize = true;
+            checkbox_wrp5.Location = new Point(628, 368);
+            checkbox_wrp5.Name = "checkbox_wrp5";
+            checkbox_wrp5.Size = new Size(70, 24);
+            checkbox_wrp5.TabIndex = 47;
+            checkbox_wrp5.Text = "WRP5";
+            checkbox_wrp5.UseVisualStyleBackColor = true;
+            // 
+            // checkbox_wrp4
+            // 
+            checkbox_wrp4.AutoSize = true;
+            checkbox_wrp4.Location = new Point(537, 371);
+            checkbox_wrp4.Name = "checkbox_wrp4";
+            checkbox_wrp4.Size = new Size(70, 24);
+            checkbox_wrp4.TabIndex = 46;
+            checkbox_wrp4.Text = "WRP4";
+            checkbox_wrp4.UseVisualStyleBackColor = true;
+            // 
+            // checkbox_wrp3
+            // 
+            checkbox_wrp3.AutoSize = true;
+            checkbox_wrp3.Location = new Point(446, 371);
+            checkbox_wrp3.Name = "checkbox_wrp3";
+            checkbox_wrp3.Size = new Size(70, 24);
+            checkbox_wrp3.TabIndex = 45;
+            checkbox_wrp3.Text = "WRP3";
+            checkbox_wrp3.UseVisualStyleBackColor = true;
+            // 
+            // checkbox_wrp2
+            // 
+            checkbox_wrp2.AutoSize = true;
+            checkbox_wrp2.Location = new Point(355, 372);
+            checkbox_wrp2.Name = "checkbox_wrp2";
+            checkbox_wrp2.Size = new Size(70, 24);
+            checkbox_wrp2.TabIndex = 44;
+            checkbox_wrp2.Text = "WRP2";
+            checkbox_wrp2.UseVisualStyleBackColor = true;
+            // 
+            // checkbox_wrp1
+            // 
+            checkbox_wrp1.AutoSize = true;
+            checkbox_wrp1.Location = new Point(264, 371);
+            checkbox_wrp1.Name = "checkbox_wrp1";
+            checkbox_wrp1.Size = new Size(70, 24);
+            checkbox_wrp1.TabIndex = 43;
+            checkbox_wrp1.Text = "WRP1";
+            checkbox_wrp1.UseVisualStyleBackColor = true;
+            // 
+            // checkbox_wrp0
+            // 
+            checkbox_wrp0.AutoSize = true;
+            checkbox_wrp0.Location = new Point(158, 371);
+            checkbox_wrp0.Name = "checkbox_wrp0";
+            checkbox_wrp0.Size = new Size(70, 24);
+            checkbox_wrp0.TabIndex = 42;
+            checkbox_wrp0.Text = "WRP0";
+            checkbox_wrp0.UseVisualStyleBackColor = true;
+            // 
+            // btn_write_p
+            // 
+            btn_write_p.Location = new Point(27, 368);
+            btn_write_p.Name = "btn_write_p";
+            btn_write_p.Size = new Size(102, 29);
+            btn_write_p.TabIndex = 41;
+            btn_write_p.Text = "WRITE_P/U";
+            btn_write_p.UseVisualStyleBackColor = true;
+            btn_write_p.Click += btn_write_p_Click;
             // 
             // checkboxMassErase
             // 
@@ -456,7 +635,7 @@
             // 
             btn_goAddr.Location = new Point(27, 227);
             btn_goAddr.Name = "btn_goAddr";
-            btn_goAddr.Size = new Size(94, 29);
+            btn_goAddr.Size = new Size(102, 29);
             btn_goAddr.TabIndex = 21;
             btn_goAddr.Text = "GO_ADDR";
             btn_goAddr.UseVisualStyleBackColor = true;
@@ -510,7 +689,7 @@
             // 
             btnReadMem.Location = new Point(27, 185);
             btnReadMem.Name = "btnReadMem";
-            btnReadMem.Size = new Size(94, 29);
+            btnReadMem.Size = new Size(102, 29);
             btnReadMem.TabIndex = 15;
             btnReadMem.Text = "READ_MEM";
             btnReadMem.UseVisualStyleBackColor = true;
@@ -520,7 +699,7 @@
             // 
             btnGetID.Location = new Point(27, 144);
             btnGetID.Name = "btnGetID";
-            btnGetID.Size = new Size(94, 29);
+            btnGetID.Size = new Size(102, 29);
             btnGetID.TabIndex = 14;
             btnGetID.Text = "GET_ID";
             btnGetID.UseVisualStyleBackColor = true;
@@ -530,7 +709,7 @@
             // 
             btnGetHelp.Location = new Point(27, 62);
             btnGetHelp.Name = "btnGetHelp";
-            btnGetHelp.Size = new Size(94, 29);
+            btnGetHelp.Size = new Size(102, 29);
             btnGetHelp.TabIndex = 13;
             btnGetHelp.Text = "GET_HELP";
             btnGetHelp.UseVisualStyleBackColor = true;
@@ -559,7 +738,7 @@
             // 
             getVersion.Location = new Point(27, 106);
             getVersion.Name = "getVersion";
-            getVersion.Size = new Size(94, 29);
+            getVersion.Size = new Size(102, 29);
             getVersion.TabIndex = 10;
             getVersion.Text = "GET_VER";
             getVersion.UseVisualStyleBackColor = true;
@@ -630,5 +809,20 @@
         private CheckBox checkboxSector1;
         private CheckBox checkBoxSec0;
         private CheckBox checkboxMassErase;
+        private Button btn_write_p;
+        private CheckBox checkbox_wrp7;
+        private CheckBox checkbox_wrp6;
+        private CheckBox checkbox_wrp5;
+        private CheckBox checkbox_wrp4;
+        private CheckBox checkbox_wrp3;
+        private CheckBox checkbox_wrp2;
+        private CheckBox checkbox_wrp1;
+        private CheckBox checkbox_wrp0;
+        private CheckBox checkbox_wrp11;
+        private CheckBox checkbox_wrp10;
+        private CheckBox checkbox_wrp8;
+        private CheckBox checkbox_wrp9;
+        private ComboBox combox_ReadL;
+        private Button btn_readoutL;
     }
 }

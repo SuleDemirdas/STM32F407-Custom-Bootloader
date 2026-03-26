@@ -26,7 +26,8 @@ namespace STM32F4Flasher
             Erase = 0x43,
             WriteProtect = 0x63,
             ReadoutProtect = 0x82,
-            GetCheckSum = 0xA1
+            GetCheckSum = 0xA1,
+            Connect = 0x62
         }
         private void groupBox1_Enter(object sender, EventArgs e)
         {
@@ -93,6 +94,16 @@ namespace STM32F4Flasher
                 connectionStatus.Text = "Connected";
                 progressBar.Value = 100;
                 txtReceiveMessage.Text = string.Empty;
+
+                List<byte> packet = new List<byte>();
+                packet.Add(0x7F); 
+                packet.Add((byte)(0x02)); 
+                byte cmd = (byte)BootloaderCommand.Connect;
+                packet.Add((byte)(cmd));
+                byte[] crcInput = packet.Skip(1).ToArray(); // CRC is calculated on len + cmd
+                byte crc = CalculateCRC8(crcInput);
+                packet.Add(crc); // CRC
+                serialPort1.Write(packet.ToArray(), 0, packet.Count);
             }
             catch
             {
@@ -157,15 +168,62 @@ namespace STM32F4Flasher
 
                 this.Invoke(new Action(() =>
                 {
+                    // 1. ESKİ İŞLEV: Gelen veriyi olduğu gibi ekrana yazdır
                     txtReceiveMessage.AppendText(hexOutput + Environment.NewLine);
                     txtReceiveMessage.SelectionStart = txtReceiveMessage.Text.Length;
                     txtReceiveMessage.ScrollToCaret();
+
+                    // 2. YENİ İŞLEV: Durum Paketini yakala (0x79 + High + Low + RDP)
+                    if (buffer.Length >= 4)
+                    {
+                        for (int i = 0; i <= buffer.Length - 4; i++)
+                        {
+                            if (buffer[i] == 0x79)
+                            {
+                                byte highByte = buffer[i + 1];
+                                byte lowByte = buffer[i + 2];
+                                byte rdpStatus = buffer[i + 3];
+
+                                // Maskeyi oluştur
+                                ushort wrpStatus = (ushort)((highByte << 8) | lowByte);
+
+                                // WRP Checkbox'larını doldur
+                                checkbox_wrp0.Checked = (wrpStatus & (1 << 0)) != 0;
+                                checkbox_wrp1.Checked = (wrpStatus & (1 << 1)) != 0;
+                                checkbox_wrp2.Checked = (wrpStatus & (1 << 2)) != 0;
+                                checkbox_wrp3.Checked = (wrpStatus & (1 << 3)) != 0;
+                                checkbox_wrp4.Checked = (wrpStatus & (1 << 4)) != 0;
+                                checkbox_wrp5.Checked = (wrpStatus & (1 << 5)) != 0;
+                                checkbox_wrp6.Checked = (wrpStatus & (1 << 6)) != 0;
+                                checkbox_wrp7.Checked = (wrpStatus & (1 << 7)) != 0;
+                                checkbox_wrp8.Checked = (wrpStatus & (1 << 8)) != 0;
+                                checkbox_wrp9.Checked = (wrpStatus & (1 << 9)) != 0;
+                                checkbox_wrp10.Checked = (wrpStatus & (1 << 10)) != 0;
+                                checkbox_wrp11.Checked = (wrpStatus & (1 << 11)) != 0;
+
+                                // RDP ComboBox'ını STM32'den gelen veriye göre otomatik seç
+                                if (rdpStatus == 0xAA)
+                                {
+                                    combox_ReadL.SelectedIndex = 0; // Level 0
+                                }
+                                else if (rdpStatus == 0xCC)
+                                {
+                                    combox_ReadL.SelectedIndex = 2; // Level 2
+                                }
+                                else
+                                {
+                                    combox_ReadL.SelectedIndex = 1; // Level 1
+                                }
+
+                                break; // İşlem tamam, döngüden çık
+                            }
+                        }
+                    }
                 }));
             }
             catch (Exception ex)
             {
                 MessageBox.Show("Error reading from serial port: " + ex.Message, "Read Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-
             }
         }
 
@@ -431,19 +489,18 @@ namespace STM32F4Flasher
 
                 List<byte> packet = new List<byte>();
                 packet.Add(0x7F);
-                packet.Add((byte)(9 + bytesToSend));
+                packet.Add((byte)(12 + bytesToSend));
                 packet.Add((byte)BootloaderCommand.WriteMemory);
                 packet.AddRange(addr);
                 packet.Add(addrCRC);
                 packet.Add((byte)(bytesToSend - 1));
-                packet.AddRange(chunk);
-                packet.Add(dataCRC);
-
                 // Total bytes as 4 bytes big-endian
                 packet.Add((byte)((totalBytes >> 24) & 0xFF));
                 packet.Add((byte)((totalBytes >> 16) & 0xFF));
                 packet.Add((byte)((totalBytes >> 8) & 0xFF));
                 packet.Add((byte)(totalBytes & 0xFF));
+                packet.AddRange(chunk);
+                packet.Add(dataCRC);
 
                 serialPort1.Write(packet.ToArray(), 0, packet.Count);
                 serialPort1.Write("\r");
@@ -499,16 +556,61 @@ namespace STM32F4Flasher
             byte selectedSectorNum = (byte)selectedSectors.Count;
 
             List<byte> data = new List<byte>();
-            
+
             data.Add(selectedSectorNum);
             data.AddRange(selectedSectors);
 
             byte crcSectors = CalculateCRC8(data.ToArray());
-            
+
             List<byte> packet = new List<byte>();
             packet.Add(0x7F);
             packet.Add((byte)(selectedSectorNum + 3)); // len = cmd + numSectors + sectorList + crc
             packet.Add((byte)BootloaderCommand.Erase);
+            packet.AddRange(data);
+            packet.Add((byte)(crcSectors));
+
+            serialPort1.Write(packet.ToArray(), 0, packet.Count);
+            serialPort1.Write("\r");
+            serialPort1.Write("\n");
+        }
+
+        private void btn_write_p_Click(object sender, EventArgs e)
+        {
+            List<byte> selectedSectors = new List<byte>();
+            if (checkbox_wrp0.Checked) selectedSectors.Add(0x00);
+            if (checkbox_wrp1.Checked) selectedSectors.Add(0x01);
+            if (checkbox_wrp2.Checked) selectedSectors.Add(0x02);
+            if (checkbox_wrp3.Checked) selectedSectors.Add(0x03);
+            if (checkbox_wrp4.Checked) selectedSectors.Add(0x04);
+            if (checkbox_wrp5.Checked) selectedSectors.Add(0x05);
+            if (checkbox_wrp6.Checked) selectedSectors.Add(0x06);
+            if (checkbox_wrp7.Checked) selectedSectors.Add(0x07);
+            if (checkbox_wrp8.Checked) selectedSectors.Add(0x08);
+            if (checkbox_wrp9.Checked) selectedSectors.Add(0x09);
+            if (checkbox_wrp10.Checked) selectedSectors.Add(0x0A);
+            if (checkbox_wrp11.Checked) selectedSectors.Add(0x0B);
+
+
+            if (selectedSectors.Count == 0)
+            {
+                MessageBox.Show("Please select at least one sector to enable write protect.", "Warning");
+                return;
+            }
+
+
+            byte selectedSectorNum = (byte)selectedSectors.Count;
+
+            List<byte> data = new List<byte>();
+
+            data.Add(selectedSectorNum);
+            data.AddRange(selectedSectors);
+
+            byte crcSectors = CalculateCRC8(data.ToArray());
+
+            List<byte> packet = new List<byte>();
+            packet.Add(0x7F);
+            packet.Add((byte)(selectedSectorNum + 3)); // len = cmd + numSectors + sectorList + crc
+            packet.Add((byte)BootloaderCommand.WriteProtect);
             packet.AddRange(data);
             packet.Add((byte)(crcSectors));
 

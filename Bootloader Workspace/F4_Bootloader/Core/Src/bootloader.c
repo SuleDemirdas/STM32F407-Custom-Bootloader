@@ -28,6 +28,8 @@ uint8_t response_read_mem[RESPONSE_READ_MEM_SIZE] = {0};
 uint8_t response_go_to_address[1] = {0};
 uint8_t response_write_memory[1] = {0};
 uint8_t response_erase[1] = {0};
+uint8_t response_write_protect_unprotect[1] = {0};
+uint8_t response_connect[RESPONSE_CONNECT_SIZE] = {0};
 
 void Bootloader_Init(UART_Transmit_FuncPtr_t p_uart_transmit_func)
 {
@@ -63,8 +65,16 @@ void processBootloaderCommand(char* buffer)
 			break;
 		case WRITE_MEMORY:
 			handleWriteMemory(buffer);
+			break;
 		case ERASE:
 			handleErase(buffer);
+			break;
+		case WRITE_PROTECT_UNPROTECT:
+			handleWriteProtectUnprotect(buffer);
+			break;
+		case CONNECT:
+			handleConnect();
+			break;
 		default:
 			break;
 	}
@@ -181,7 +191,7 @@ int handleGoToAddress(char* buffer)
 
 int handleWriteMemory(char* buffer)
 {
-	uint8_t offset = 9;
+	uint8_t offset = 13;
 	uint8_t addrBytes[4] = {buffer[3],buffer[4],buffer[5],buffer[6]};
 	uint8_t addr_crc_received = buffer[7];
 	uint8_t dataLength = buffer[8]+1;
@@ -196,6 +206,7 @@ int handleWriteMemory(char* buffer)
 	{
 		received_data_bytes[i] = buffer[i+offset];
 	}
+	uint32_t totalBytes = (((uint32_t)buffer[9] << 24) | ((uint32_t)buffer[10] << 16) | ((uint32_t)buffer[11] << 8)  | ((uint32_t)buffer[12]));
 
 	addr_crc_calculated = CalculateCRC8(addrBytes, 4);
 	data_crc_calculated = CalculateCRC8(received_data_bytes, dataLength);
@@ -293,6 +304,62 @@ int handleErase(char* buffer)
 	return 1;
 }
 
+void handleWriteProtectUnprotect(char* buffer)
+{
+	uint8_t offset = 4;
+	uint8_t rx_numOfSectors = buffer[3];
+	uint8_t rx_sectors[MAX_NUM_OF_SECTORS + 1] = {0};
+	uint8_t crc_received = buffer[offset + rx_numOfSectors];
+	uint32_t sectors = 0x00;
+
+	rx_sectors[0] = rx_numOfSectors;
+
+	for(int i = 0; i < rx_numOfSectors; i++)
+	{
+		rx_sectors[i + 1] = buffer[offset + i];
+		sectors |= 1 << (rx_sectors[i + 1]);
+	}
+
+	uint8_t crc_calculated = CalculateCRC8(rx_sectors, rx_numOfSectors + 1);
+
+	if(crc_received != crc_calculated)
+	{
+		response_write_protect_unprotect[0] = NACK;
+        bootloader_send_response(response_write_protect_unprotect, 1);
+        return;
+	}
+
+	uint32_t wrp_mask = (~sectors) & 0x0FFF;
+
+	HAL_FLASH_Unlock();
+	HAL_FLASH_OB_Unlock();
+
+	while(__HAL_FLASH_GET_FLAG(FLASH_FLAG_BSY) != RESET) {}
+
+	FLASH->OPTCR &= ~(0x0FFF << 16);
+	FLASH->OPTCR |= (wrp_mask << 16);
+
+	response_write_protect_unprotect[0] = ACK;
+	bootloader_send_response(response_write_protect_unprotect, 1);
+
+	HAL_FLASH_OB_Launch();
+}
+void handleConnect(void)
+{
+	uint32_t wrp_status = ~(FLASH->OPTCR >> 16) & 0xFFF; // 1 -> protected, 0 -> unprotected
+	uint8_t high_sectors = wrp_status >> 8;
+	uint8_t low_sectors = wrp_status & 0xFF;
+	uint32_t readout_status = (FLASH->OPTCR >> 8) & 0xFF;
+
+	response_connect[0] = ACK;
+	response_connect[1] = high_sectors;
+	response_connect[2] = low_sectors;
+	response_connect[3] = readout_status;
+
+	bootloader_send_response(response_connect, RESPONSE_CONNECT_SIZE);
+	return;
+}
+
 int EraseFlashSectors(uint8_t sector)
 {
 	HAL_StatusTypeDef status;
@@ -325,6 +392,47 @@ int EraseFlashSectors(uint8_t sector)
 		return -1;
 	}
 }
+uint8_t GetSectorNumber(uint32_t address)
+{
+	if( (address >= ADDR_FLASH_SECTOR_0) && (address < ADDR_FLASH_SECTOR_1)) return 0x00;
+	if( (address >= ADDR_FLASH_SECTOR_1) && (address < ADDR_FLASH_SECTOR_2)) return 0x01;
+	if( (address >= ADDR_FLASH_SECTOR_2) && (address < ADDR_FLASH_SECTOR_3)) return 0x02;
+	if( (address >= ADDR_FLASH_SECTOR_3) && (address < ADDR_FLASH_SECTOR_4)) return 0x03;
+	if( (address >= ADDR_FLASH_SECTOR_4) && (address < ADDR_FLASH_SECTOR_5)) return 0x04;
+	if( (address >= ADDR_FLASH_SECTOR_5) && (address < ADDR_FLASH_SECTOR_6)) return 0x05;
+	if( (address >= ADDR_FLASH_SECTOR_6) && (address < ADDR_FLASH_SECTOR_7)) return 0x06;
+	if( (address >= ADDR_FLASH_SECTOR_7) && (address < ADDR_FLASH_SECTOR_8)) return 0x07;
+	if( (address >= ADDR_FLASH_SECTOR_8) && (address < ADDR_FLASH_SECTOR_9)) return 0x08;
+	if( (address >= ADDR_FLASH_SECTOR_9) && (address < ADDR_FLASH_SECTOR_10)) return 0x09;
+	if( (address >= ADDR_FLASH_SECTOR_10) && (address < ADDR_FLASH_SECTOR_11)) return 0x0A;
+	if( (address >= ADDR_FLASH_SECTOR_11) && (address < FLASH_END)) return 0x0B;
+	return 0xFF;
+}
+
+uint8_t GetFlashSectors(uint32_t address, uint8_t* sectors, uint32_t totalBytes)
+{
+	uint8_t start_sector = 0;
+	uint8_t end_sector = 0;
+	uint8_t nbSectors = 0;
+	uint32_t end_address = address + totalBytes;
+
+	start_sector = GetSectorNumber(address);
+	end_sector = GetSectorNumber(end_address);
+
+	if( ( start_sector == 0xFF ) || ( end_sector == 0xFF ) )
+	{
+		return 0;
+	}
+
+	nbSectors = end_sector - start_sector + 1;
+
+	for(int i = 0; i < nbSectors; i++)
+	{
+		sectors[i] = start_sector + i;
+	}
+	return nbSectors;
+}
+
 
 uint8_t CalculateCRC8(uint8_t* data, uint32_t length)
 {
