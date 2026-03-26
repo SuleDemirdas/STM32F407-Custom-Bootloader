@@ -72,6 +72,9 @@ void processBootloaderCommand(char* buffer)
 		case WRITE_PROTECT_UNPROTECT:
 			handleWriteProtectUnprotect(buffer);
 			break;
+		case READOUT_PROTECT_UNPROTECT:
+			handleReadOutProtectUnprotect(buffer);
+			break;
 		case CONNECT:
 			handleConnect();
 			break;
@@ -306,21 +309,13 @@ int handleErase(char* buffer)
 
 void handleWriteProtectUnprotect(char* buffer)
 {
-	uint8_t offset = 4;
 	uint8_t rx_numOfSectors = buffer[3];
-	uint8_t rx_sectors[MAX_NUM_OF_SECTORS + 1] = {0};
-	uint8_t crc_received = buffer[offset + rx_numOfSectors];
-	uint32_t sectors = 0x00;
+	uint8_t high_sectors = buffer[4];
+	uint8_t low_sectors = buffer[5];
+	uint8_t crc_received = buffer[6];
+	uint8_t crc_data[3] = {buffer[3], buffer[4], buffer[5]};
 
-	rx_sectors[0] = rx_numOfSectors;
-
-	for(int i = 0; i < rx_numOfSectors; i++)
-	{
-		rx_sectors[i + 1] = buffer[offset + i];
-		sectors |= 1 << (rx_sectors[i + 1]);
-	}
-
-	uint8_t crc_calculated = CalculateCRC8(rx_sectors, rx_numOfSectors + 1);
+	uint8_t crc_calculated = CalculateCRC8(crc_data, 3);
 
 	if(crc_received != crc_calculated)
 	{
@@ -329,15 +324,17 @@ void handleWriteProtectUnprotect(char* buffer)
         return;
 	}
 
-	uint32_t wrp_mask = (~sectors) & 0x0FFF;
+	uint32_t wrp_mask = (((uint32_t)high_sectors << 8) | low_sectors) & 0x0FFF;
 
 	HAL_FLASH_Unlock();
 	HAL_FLASH_OB_Unlock();
 
 	while(__HAL_FLASH_GET_FLAG(FLASH_FLAG_BSY) != RESET) {}
 
-	FLASH->OPTCR &= ~(0x0FFF << 16);
-	FLASH->OPTCR |= (wrp_mask << 16);
+	uint32_t optcr_val = FLASH->OPTCR;
+	optcr_val &= ~(0x0FFF << 16);
+	optcr_val |= (wrp_mask << 16);
+	FLASH->OPTCR = optcr_val;
 
 	response_write_protect_unprotect[0] = ACK;
 	bootloader_send_response(response_write_protect_unprotect, 1);
