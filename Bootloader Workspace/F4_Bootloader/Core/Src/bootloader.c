@@ -400,7 +400,11 @@ int EraseFlashSectors(uint8_t sector)
 
 	if (sector == 0xFF)
 	{
-		FLASH_Erase_Init.TypeErase = FLASH_TYPEERASE_MASSERASE;
+		FLASH_Erase_Init.TypeErase = FLASH_TYPEERASE_SECTORS;
+		FLASH_Erase_Init.Sector = FLASH_SECTOR_2;
+		FLASH_Erase_Init.NbSectors = 10;
+		FLASH_Erase_Init.VoltageRange = FLASH_VOLTAGE_RANGE_3;
+
 		status = HAL_FLASHEx_Erase(&FLASH_Erase_Init, &SectorError);
 	}
 	else
