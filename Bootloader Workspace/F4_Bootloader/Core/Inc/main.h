@@ -49,9 +49,6 @@ extern "C" {
 #define BUFFER_SIZE		  400
 extern UART_HandleTypeDef huart1;
 extern UART_HandleTypeDef huart2;
-#define UART_PORT 		  &huart1
-
-
 
 /* USER CODE END EM */
 
@@ -70,7 +67,7 @@ int uartTransmit(uint8_t* message, uint32_t size);
 #define LED_GPIO_Port GPIOD
 
 /* USER CODE BEGIN Private defines */
-
+#define UART_PORT 		  &huart1
 /* USER CODE END Private defines */
 
 #ifdef __cplusplus
