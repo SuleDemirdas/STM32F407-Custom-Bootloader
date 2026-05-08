@@ -42,6 +42,7 @@
             comBoxComPort = new ComboBox();
             lblComPort = new Label();
             groupBox1 = new GroupBox();
+            btnJumpToBL = new Button();
             combox_ReadL = new ComboBox();
             btn_readoutL = new Button();
             checkbox_wrp11 = new CheckBox();
@@ -68,8 +69,6 @@
             checkboxSector4 = new CheckBox();
             checkboxSector3 = new CheckBox();
             checkboxSector2 = new CheckBox();
-            checkboxSector1 = new CheckBox();
-            checkBoxSec0 = new CheckBox();
             btn_erase = new Button();
             progbarWriteMem = new ProgressBar();
             btnBrowse = new Button();
@@ -235,6 +234,7 @@
             // 
             // groupBox1
             // 
+            groupBox1.Controls.Add(btnJumpToBL);
             groupBox1.Controls.Add(combox_ReadL);
             groupBox1.Controls.Add(btn_readoutL);
             groupBox1.Controls.Add(checkbox_wrp11);
@@ -261,8 +261,6 @@
             groupBox1.Controls.Add(checkboxSector4);
             groupBox1.Controls.Add(checkboxSector3);
             groupBox1.Controls.Add(checkboxSector2);
-            groupBox1.Controls.Add(checkboxSector1);
-            groupBox1.Controls.Add(checkBoxSec0);
             groupBox1.Controls.Add(btn_erase);
             groupBox1.Controls.Add(progbarWriteMem);
             groupBox1.Controls.Add(btnBrowse);
@@ -284,10 +282,20 @@
             groupBox1.Controls.Add(getVersion);
             groupBox1.Location = new Point(351, 18);
             groupBox1.Name = "groupBox1";
-            groupBox1.Size = new Size(830, 489);
+            groupBox1.Size = new Size(830, 559);
             groupBox1.TabIndex = 1;
             groupBox1.TabStop = false;
             groupBox1.Text = "Commands";
+            // 
+            // btnJumpToBL
+            // 
+            btnJumpToBL.Location = new Point(27, 485);
+            btnJumpToBL.Name = "btnJumpToBL";
+            btnJumpToBL.Size = new Size(102, 29);
+            btnJumpToBL.TabIndex = 55;
+            btnJumpToBL.Text = "REBOOT";
+            btnJumpToBL.UseVisualStyleBackColor = true;
+            btnJumpToBL.Click += btnJumpToBL_Click;
             // 
             // combox_ReadL
             // 
@@ -307,6 +315,7 @@
             btn_readoutL.TabIndex = 54;
             btn_readoutL.Text = "READOUT_L";
             btn_readoutL.UseVisualStyleBackColor = true;
+            btn_readoutL.Click += btn_readoutL_Click;
             // 
             // checkbox_wrp11
             // 
@@ -442,7 +451,7 @@
             // 
             checkboxMassErase.AutoSize = true;
             checkboxMassErase.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
-            checkboxMassErase.Location = new Point(719, 303);
+            checkboxMassErase.Location = new Point(636, 321);
             checkboxMassErase.Name = "checkboxMassErase";
             checkboxMassErase.Size = new Size(108, 24);
             checkboxMassErase.TabIndex = 40;
@@ -453,7 +462,7 @@
             // checkboxSector11
             // 
             checkboxSector11.AutoSize = true;
-            checkboxSector11.Location = new Point(628, 333);
+            checkboxSector11.Location = new Point(537, 338);
             checkboxSector11.Name = "checkboxSector11";
             checkboxSector11.Size = new Size(93, 24);
             checkboxSector11.TabIndex = 39;
@@ -463,7 +472,7 @@
             // checkboxSector10
             // 
             checkboxSector10.AutoSize = true;
-            checkboxSector10.Location = new Point(537, 334);
+            checkboxSector10.Location = new Point(446, 334);
             checkboxSector10.Name = "checkboxSector10";
             checkboxSector10.Size = new Size(93, 24);
             checkboxSector10.TabIndex = 38;
@@ -473,7 +482,7 @@
             // checkboxSector9
             // 
             checkboxSector9.AutoSize = true;
-            checkboxSector9.Location = new Point(446, 333);
+            checkboxSector9.Location = new Point(355, 334);
             checkboxSector9.Name = "checkboxSector9";
             checkboxSector9.Size = new Size(85, 24);
             checkboxSector9.TabIndex = 37;
@@ -483,7 +492,7 @@
             // checkboxSector8
             // 
             checkboxSector8.AutoSize = true;
-            checkboxSector8.Location = new Point(355, 334);
+            checkboxSector8.Location = new Point(264, 334);
             checkboxSector8.Name = "checkboxSector8";
             checkboxSector8.Size = new Size(85, 24);
             checkboxSector8.TabIndex = 36;
@@ -493,7 +502,7 @@
             // checkboxSector7
             // 
             checkboxSector7.AutoSize = true;
-            checkboxSector7.Location = new Point(264, 333);
+            checkboxSector7.Location = new Point(157, 338);
             checkboxSector7.Name = "checkboxSector7";
             checkboxSector7.Size = new Size(85, 24);
             checkboxSector7.TabIndex = 35;
@@ -503,7 +512,7 @@
             // checkboxSector6
             // 
             checkboxSector6.AutoSize = true;
-            checkboxSector6.Location = new Point(158, 333);
+            checkboxSector6.Location = new Point(537, 308);
             checkboxSector6.Name = "checkboxSector6";
             checkboxSector6.Size = new Size(85, 24);
             checkboxSector6.TabIndex = 34;
@@ -513,7 +522,7 @@
             // checkboxSector5
             // 
             checkboxSector5.AutoSize = true;
-            checkboxSector5.Location = new Point(628, 303);
+            checkboxSector5.Location = new Point(446, 303);
             checkboxSector5.Name = "checkboxSector5";
             checkboxSector5.Size = new Size(85, 24);
             checkboxSector5.TabIndex = 33;
@@ -523,7 +532,7 @@
             // checkboxSector4
             // 
             checkboxSector4.AutoSize = true;
-            checkboxSector4.Location = new Point(537, 304);
+            checkboxSector4.Location = new Point(355, 304);
             checkboxSector4.Name = "checkboxSector4";
             checkboxSector4.Size = new Size(85, 24);
             checkboxSector4.TabIndex = 32;
@@ -533,7 +542,7 @@
             // checkboxSector3
             // 
             checkboxSector3.AutoSize = true;
-            checkboxSector3.Location = new Point(446, 303);
+            checkboxSector3.Location = new Point(264, 307);
             checkboxSector3.Name = "checkboxSector3";
             checkboxSector3.Size = new Size(85, 24);
             checkboxSector3.TabIndex = 31;
@@ -543,32 +552,12 @@
             // checkboxSector2
             // 
             checkboxSector2.AutoSize = true;
-            checkboxSector2.Location = new Point(355, 304);
+            checkboxSector2.Location = new Point(157, 309);
             checkboxSector2.Name = "checkboxSector2";
             checkboxSector2.Size = new Size(85, 24);
             checkboxSector2.TabIndex = 30;
             checkboxSector2.Text = "Sector 2";
             checkboxSector2.UseVisualStyleBackColor = true;
-            // 
-            // checkboxSector1
-            // 
-            checkboxSector1.AutoSize = true;
-            checkboxSector1.Location = new Point(264, 303);
-            checkboxSector1.Name = "checkboxSector1";
-            checkboxSector1.Size = new Size(85, 24);
-            checkboxSector1.TabIndex = 29;
-            checkboxSector1.Text = "Sector 1";
-            checkboxSector1.UseVisualStyleBackColor = true;
-            // 
-            // checkBoxSec0
-            // 
-            checkBoxSec0.AutoSize = true;
-            checkBoxSec0.Location = new Point(158, 303);
-            checkBoxSec0.Name = "checkBoxSec0";
-            checkBoxSec0.Size = new Size(85, 24);
-            checkBoxSec0.TabIndex = 28;
-            checkBoxSec0.Text = "Sector 0";
-            checkBoxSec0.UseVisualStyleBackColor = true;
             // 
             // btn_erase
             // 
@@ -806,8 +795,6 @@
         private CheckBox checkboxSector4;
         private CheckBox checkboxSector3;
         private CheckBox checkboxSector2;
-        private CheckBox checkboxSector1;
-        private CheckBox checkBoxSec0;
         private CheckBox checkboxMassErase;
         private Button btn_write_p;
         private CheckBox checkbox_wrp7;
@@ -824,5 +811,6 @@
         private CheckBox checkbox_wrp9;
         private ComboBox combox_ReadL;
         private Button btn_readoutL;
+        private Button btnJumpToBL;
     }
 }

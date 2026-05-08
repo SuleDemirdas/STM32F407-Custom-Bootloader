@@ -27,7 +27,8 @@ namespace STM32F4Flasher
             WriteProtect = 0x63,
             ReadoutProtect = 0x82,
             GetCheckSum = 0xA1,
-            Connect = 0x62
+            Connect = 0x62,
+            JumpToBootloader = 0x79
         }
         private void groupBox1_Enter(object sender, EventArgs e)
         {
@@ -649,6 +650,21 @@ namespace STM32F4Flasher
             serialPort1.Write(packet.ToArray(), 0, packet.Count);
             serialPort1.Write("\r");
             serialPort1.Write("\n");
+        }
+
+        private void btnJumpToBL_Click(object sender, EventArgs e)
+        {
+            List<byte> packet = new List<byte>();
+            packet.Add(0x7F); // Bootloader Header
+            byte cmd = (byte)BootloaderCommand.JumpToBootloader;
+            packet.Add(cmd); // Command
+
+            if (serialPort1.IsOpen)
+            {
+                serialPort1.Write(packet.ToArray(), 0, packet.Count);
+                serialPort1.Write("\r");
+                serialPort1.Write("\n");
+            }
         }
     }
 }

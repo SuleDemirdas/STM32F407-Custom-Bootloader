@@ -22,6 +22,7 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include "stdint.h"
+#include "stdbool.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -32,6 +33,7 @@
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
 #define MESSAGE_SIZE	24
+#define MAGIC_WORD_BOOTLOADER	0xBE57BAC1
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -44,7 +46,9 @@ UART_HandleTypeDef huart1;
 UART_HandleTypeDef huart2;
 
 /* USER CODE BEGIN PV */
+uint8_t rx_data;
 uint8_t message_u8[24] = "Application Running...\n\r";
+volatile bool jumpToBootloaderFlag = false;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -53,11 +57,21 @@ static void MX_GPIO_Init(void);
 static void MX_USART1_UART_Init(void);
 static void MX_USART2_UART_Init(void);
 /* USER CODE BEGIN PFP */
+void GoToBootloader_Command_Received(void);
 
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
+typedef enum
+{
+	HEADER,
+	CMD,
+	TERMINATE,
+	NEW_LINE
+}RX_STATES;
+
+RX_STATES uart_rx_status;
 
 /* USER CODE END 0 */
 
@@ -93,7 +107,7 @@ int main(void)
   MX_USART1_UART_Init();
   MX_USART2_UART_Init();
   /* USER CODE BEGIN 2 */
-
+  HAL_UART_Receive_IT(&huart1, &rx_data, 1);
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -101,7 +115,6 @@ int main(void)
   while (1)
   {
     /* USER CODE END WHILE */
-
     /* USER CODE BEGIN 3 */
 	HAL_UART_Transmit(&huart1, message_u8, MESSAGE_SIZE, HAL_MAX_DELAY);
 	HAL_GPIO_TogglePin(LED_GPIO_Port, LED_Pin);
@@ -261,7 +274,59 @@ static void MX_GPIO_Init(void)
 }
 
 /* USER CODE BEGIN 4 */
+void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
+{
+	if (huart->Instance == USART1)
+	{
+		switch (uart_rx_status) {
+			case HEADER:
+				if(rx_data == 0x7F)
+				{
+					uart_rx_status = CMD;
+				}
+				else if (rx_data != 0x7F) uart_rx_status = HEADER;
+				break;
+			case CMD:
+				if(rx_data == 0x79)
+				{
+					uart_rx_status = TERMINATE;
+				}
+				else if (rx_data != 0x7F) uart_rx_status = HEADER;
+				break;
+			case TERMINATE:
+				if(rx_data == '\r')
+				{
+					uart_rx_status = NEW_LINE;
+				}
+				else if (rx_data != 0x7F) uart_rx_status = HEADER;
+				break;
+			case NEW_LINE:
+				if(rx_data == '\n')
+				{
+					jumpToBootloaderFlag = true;
+					GoToBootloader_Command_Received();
+					uart_rx_status = HEADER;
+				}
+				else if (rx_data != 0x7F) uart_rx_status = HEADER;
+				break;
+			default:
+				jumpToBootloaderFlag = false;
+				break;
+		}
+		HAL_UART_Receive_IT(&huart1, &rx_data, 1);
+	}
+}
 
+void GoToBootloader_Command_Received(void)
+{
+    __HAL_RCC_PWR_CLK_ENABLE();
+
+    HAL_PWR_EnableBkUpAccess();
+
+    RTC->BKP1R = MAGIC_WORD_BOOTLOADER;
+
+    NVIC_SystemReset();
+}
 /* USER CODE END 4 */
 
 /**

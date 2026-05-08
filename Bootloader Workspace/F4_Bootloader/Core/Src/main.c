@@ -149,8 +149,33 @@ int main(void)
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
   MX_USART1_UART_Init();
+
   /* USER CODE BEGIN 2 */
-  //HAL_UART_Transmit(UART_PORT, message, MESSAGE_SIZE, HAL_MAX_DELAY);
+
+  __HAL_RCC_PWR_CLK_ENABLE();
+  HAL_PWR_EnableBkUpAccess();
+
+  uint8_t stay_in_bootloader = 0;
+
+  if (RTC->BKP1R == MAGIC_WORD_BOOTLOADER)
+  {
+      RTC->BKP1R = 0x00000000; // Bir dahaki resette döngüye girmemek için hemen sil!
+      stay_in_bootloader = 1;  // Güncelleme modunda (Bootloader'da) kal
+  }
+  else if (HAL_GPIO_ReadPin(BUTTON_GPIO_Port, BUTTON_Pin) == GPIO_PIN_SET)
+  {
+      stay_in_bootloader = 1;
+  }
+
+  if (stay_in_bootloader == 0)
+  {
+      HAL_UART_Transmit(UART_PORT, message_jump, MESSAGE_SIZE, HAL_MAX_DELAY);
+#ifdef PRINT_DEBUG
+      printf("%s",message_jump);
+#endif
+      JumpToApplication();
+  }
+
   HAL_UART_Receive_IT(UART_PORT, &rxChar, 1);
 
   /* USER CODE END 2 */
@@ -162,22 +187,13 @@ int main(void)
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
-	  if(HAL_GPIO_ReadPin(BUTTON_GPIO_Port, BUTTON_Pin))
-	  {
-		  HAL_UART_Transmit(UART_PORT, message_jump, MESSAGE_SIZE, HAL_MAX_DELAY);
-#ifdef PRINT_DEBUG
-		  printf("%s",message_jump);
-#endif
-		  JumpToApplication();
-	  }
+    if(packetReadyFlag)
+    {
+        packetReadyFlag = 0;
+        processBootloaderCommand(messageBuffer);
+    }
 
-	if(packetReadyFlag)
-	{
-		packetReadyFlag = 0;
-		processBootloaderCommand(messageBuffer);
-	}
   }
-  //HAL_NVIC_SystemReset()
   /* USER CODE END 3 */
 }
 

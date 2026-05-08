@@ -68,6 +68,7 @@ int uartTransmit(uint8_t* message, uint32_t size);
 
 /* USER CODE BEGIN Private defines */
 #define UART_PORT 		  &huart1
+#define MAGIC_WORD_BOOTLOADER	0xBE57BAC1
 /* USER CODE END Private defines */
 
 #ifdef __cplusplus
