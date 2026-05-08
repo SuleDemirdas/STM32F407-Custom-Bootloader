@@ -74,6 +74,6 @@ int handleWriteMemory(char* buffer);
 int handleErase(char* buffer);
 void handleWriteProtectUnprotect(char* buffer);
 void handleConnect(void);
-
+void handleReadOutProtectUnprotect(char* buffer);
 
 #endif /* INC_BOOTLOADER_H_ */

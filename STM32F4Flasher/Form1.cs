@@ -96,8 +96,8 @@ namespace STM32F4Flasher
                 txtReceiveMessage.Text = string.Empty;
 
                 List<byte> packet = new List<byte>();
-                packet.Add(0x7F); 
-                packet.Add((byte)(0x02)); 
+                packet.Add(0x7F);
+                packet.Add((byte)(0x02));
                 byte cmd = (byte)BootloaderCommand.Connect;
                 packet.Add((byte)(cmd));
                 byte[] crcInput = packet.Skip(1).ToArray(); // CRC is calculated on len + cmd
@@ -527,8 +527,6 @@ namespace STM32F4Flasher
         private void btn_erase_Click(object sender, EventArgs e)
         {
             List<byte> selectedSectors = new List<byte>();
-            if (checkBoxSec0.Checked) selectedSectors.Add(0x00);
-            if (checkboxSector1.Checked) selectedSectors.Add(0x01);
             if (checkboxSector2.Checked) selectedSectors.Add(0x02);
             if (checkboxSector3.Checked) selectedSectors.Add(0x03);
             if (checkboxSector4.Checked) selectedSectors.Add(0x04);
@@ -590,29 +588,63 @@ namespace STM32F4Flasher
             if (checkbox_wrp10.Checked) selectedSectors.Add(0x0A);
             if (checkbox_wrp11.Checked) selectedSectors.Add(0x0B);
 
-
-            if (selectedSectors.Count == 0)
-            {
-                MessageBox.Show("Please select at least one sector to enable write protect.", "Warning");
-                return;
-            }
-
-
             byte selectedSectorNum = (byte)selectedSectors.Count;
 
+            byte highSectors = 0xFF;
+            byte lowSectors = 0xFF;
+
+            for (int i = 0; i < selectedSectors.Count; i++)
+            {
+                if (selectedSectors[i] < 8)
+                    lowSectors &= (byte)~(1 << selectedSectors[i]);
+                else
+                    highSectors &= (byte)~(1 << (selectedSectors[i] - 8));
+            }
             List<byte> data = new List<byte>();
 
             data.Add(selectedSectorNum);
-            data.AddRange(selectedSectors);
+            data.Add(highSectors);
+            data.Add(lowSectors);
 
             byte crcSectors = CalculateCRC8(data.ToArray());
 
             List<byte> packet = new List<byte>();
             packet.Add(0x7F);
-            packet.Add((byte)(selectedSectorNum + 3)); // len = cmd + numSectors + sectorList + crc
+            packet.Add((byte)(0x06)); // len = cmd + numSectors + sectorList + crc
             packet.Add((byte)BootloaderCommand.WriteProtect);
             packet.AddRange(data);
             packet.Add((byte)(crcSectors));
+
+            serialPort1.Write(packet.ToArray(), 0, packet.Count);
+            serialPort1.Write("\r");
+            serialPort1.Write("\n");
+        }
+
+        private void btn_readoutL_Click(object sender, EventArgs e)
+        {
+            List<byte> rdp = new List<byte>();
+
+            if (combox_ReadL.SelectedIndex == 0)
+            {
+                rdp.Add(0xAA);
+            }
+            if (combox_ReadL.SelectedIndex == 1)
+            {
+                rdp.Add(0xBB);
+            }
+            if (combox_ReadL.SelectedIndex == 2)
+            {
+                rdp.Add(0xCC);
+            }
+
+            byte crc_rdp = CalculateCRC8(rdp.ToArray());
+
+            List<byte> packet = new List<byte>();
+            packet.Add(0x7F);
+            packet.Add((byte)(0x03)); // len = cmd + rdp + crc
+            packet.Add((byte)BootloaderCommand.ReadoutProtect);
+            packet.AddRange(rdp);
+            packet.Add((byte)(crc_rdp));
 
             serialPort1.Write(packet.ToArray(), 0, packet.Count);
             serialPort1.Write("\r");

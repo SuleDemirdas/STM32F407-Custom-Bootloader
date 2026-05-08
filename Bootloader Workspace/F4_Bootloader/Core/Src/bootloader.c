@@ -30,6 +30,7 @@ uint8_t response_write_memory[1] = {0};
 uint8_t response_erase[1] = {0};
 uint8_t response_write_protect_unprotect[1] = {0};
 uint8_t response_connect[RESPONSE_CONNECT_SIZE] = {0};
+uint8_t response_readout[1] = {0};
 
 void Bootloader_Init(UART_Transmit_FuncPtr_t p_uart_transmit_func)
 {
@@ -355,6 +356,37 @@ void handleConnect(void)
 
 	bootloader_send_response(response_connect, RESPONSE_CONNECT_SIZE);
 	return;
+}
+void handleReadOutProtectUnprotect(char* buffer)
+{
+	uint8_t crc_received = buffer[4];
+	uint8_t rdp_mode = buffer[3];
+
+	uint8_t crc_calculated = CalculateCRC8(&rdp_mode, 1);
+
+	if(crc_received != crc_calculated)
+	{
+		response_readout[0] = NACK;
+        bootloader_send_response(response_readout, 1);
+        return;
+	}
+
+	HAL_FLASH_Unlock();
+	HAL_FLASH_OB_Unlock();
+
+	while(__HAL_FLASH_GET_FLAG(FLASH_FLAG_BSY) != RESET) {}
+
+	uint32_t optcr_val = FLASH->OPTCR;
+	optcr_val &= ~(0xFF << 8);
+	optcr_val |= ((uint32_t)rdp_mode << 8);
+	FLASH->OPTCR = optcr_val;
+
+	response_readout[0] = ACK;
+	bootloader_send_response(response_readout, 1);
+
+	HAL_FLASH_OB_Launch();
+
+	HAL_FLASH_Lock();
 }
 
 int EraseFlashSectors(uint8_t sector)
