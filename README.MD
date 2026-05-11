@@ -49,6 +49,7 @@ Standart UART haberleşmesinde cihazlar arası bağlantılar çapraz (TX → RX)
 Kullanılan USART1_RX pini FT(Five Volt Tolerant) (Table 11: maksimum gerilim Vdd+4) olması rağmen Arduinodan gelen 5V logic input değerini alamadığı için RX pinine giden input gerilimi bir gerilim bölücü kullanılarak 3.3V düşürüldü. 
 
 Kullanılan Gerilim bölücü devre:
+
 ![voltage divider](voltageDivider.png)
 
 ---
@@ -242,4 +243,4 @@ Normalde bootloader moduna geçmek için USER butonuna basılı tutup cihazı po
 
 ## Kaynak
 
-Bu projenin temel kavramları ve çıkış noktası, Arif Mandal tarafından xBowtie platformunda verilen **STM32 ile Kendi Bootloader'ını (Önyükleyici) Geliştir!** kursuna dayanmaktadır.
+Bu projenin temel kavramları ve çıkış noktası, **Arif Mandal** tarafından **xBowtie** platformunda verilen **STM32 ile Kendi Bootloader'ını (Önyükleyici) Geliştir!** kursuna dayanmaktadır.
