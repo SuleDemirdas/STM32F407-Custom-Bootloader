@@ -58,6 +58,7 @@ volatile uint8_t jumpFlag = 0;
 volatile uint8_t packetReadyFlag = 0;
 volatile uint32_t jumpAddress = 0;
 uint8_t expectedLen = 0;
+uint8_t wrp_rdp_status[4] = {0};
 
 enum
 {
@@ -149,7 +150,6 @@ int main(void)
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
   MX_USART1_UART_Init();
-
   /* USER CODE BEGIN 2 */
 
   __HAL_RCC_PWR_CLK_ENABLE();
@@ -175,6 +175,17 @@ int main(void)
 #endif
       JumpToApplication();
   }
+  uint32_t wrp_status = ~(FLASH->OPTCR >> 16) & 0xFFF; // 1 -> protected, 0 -> unprotected
+  uint8_t high_sectors = wrp_status >> 8;
+  uint8_t low_sectors = wrp_status & 0xFF;
+  uint32_t readout_status = (FLASH->OPTCR >> 8) & 0xFF;
+
+  wrp_rdp_status[0] = 0x79;
+  wrp_rdp_status[1] = high_sectors;
+  wrp_rdp_status[2] = low_sectors;
+  wrp_rdp_status[3] = readout_status;
+
+  HAL_UART_Transmit_IT(&huart1, wrp_rdp_status, 4);
 
   HAL_UART_Receive_IT(UART_PORT, &rxChar, 1);
 
