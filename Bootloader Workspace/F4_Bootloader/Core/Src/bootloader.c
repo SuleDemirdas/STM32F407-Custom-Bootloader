@@ -31,6 +31,7 @@ uint8_t response_erase[1] = {0};
 uint8_t response_write_protect_unprotect[1] = {0};
 uint8_t response_connect[RESPONSE_CONNECT_SIZE] = {0};
 uint8_t response_readout[1] = {0};
+uint8_t response_unknownCommand[1] = {0};
 
 void Bootloader_Init(UART_Transmit_FuncPtr_t p_uart_transmit_func)
 {
@@ -79,7 +80,10 @@ void processBootloaderCommand(char* buffer)
 		case CONNECT:
 			handleConnect();
 			break;
+		case EXIT:
+			handleExit();
 		default:
+			handleUnknownCommand();
 			break;
 	}
 
@@ -210,7 +214,7 @@ int handleWriteMemory(char* buffer)
 	{
 		received_data_bytes[i] = buffer[i+offset];
 	}
-	uint32_t totalBytes = (((uint32_t)buffer[9] << 24) | ((uint32_t)buffer[10] << 16) | ((uint32_t)buffer[11] << 8)  | ((uint32_t)buffer[12]));
+	//uint32_t totalBytes = (((uint32_t)buffer[9] << 24) | ((uint32_t)buffer[10] << 16) | ((uint32_t)buffer[11] << 8)  | ((uint32_t)buffer[12]));
 
 	addr_crc_calculated = CalculateCRC8(addrBytes, 4);
 	data_crc_calculated = CalculateCRC8(received_data_bytes, dataLength);
@@ -310,7 +314,7 @@ int handleErase(char* buffer)
 
 void handleWriteProtectUnprotect(char* buffer)
 {
-	uint8_t rx_numOfSectors = buffer[3];
+	//uint8_t rx_numOfSectors = buffer[3];
 	uint8_t high_sectors = buffer[4];
 	uint8_t low_sectors = buffer[5];
 	uint8_t crc_received = buffer[6];
@@ -387,6 +391,27 @@ void handleReadOutProtectUnprotect(char* buffer)
 	HAL_FLASH_OB_Launch();
 
 	HAL_FLASH_Lock();
+}
+
+void handleUnknownCommand(void)
+{
+	response_unknownCommand[0] = UNKNOWN;
+	bootloader_send_response(response_unknownCommand, 1);
+}
+void handleExit(void)
+{
+	HAL_RCC_DeInit();
+	HAL_DeInit();
+
+	SysTick->CTRL = 0;
+	SysTick->LOAD = 0;
+	SysTick->VAL = 0;
+
+	__set_MSP(APP_STACK_POINTER);
+	void (*AppResetHandler)(void) ;
+
+	AppResetHandler = (void (*)(void))APP_RESET_HANDLER;
+	AppResetHandler();
 }
 
 int EraseFlashSectors(uint8_t sector)

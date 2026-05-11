@@ -11,7 +11,7 @@ namespace STM32F4Flasher
             // To customize application configuration such as set high DPI settings or default font,
             // see https://aka.ms/applicationconfiguration.
             ApplicationConfiguration.Initialize();
-            Application.Run(new STM32F4Flasher());
+            Application.Run(new STM32F407Flasher());
         }
     }
 }

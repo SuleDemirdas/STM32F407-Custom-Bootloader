@@ -1,6 +1,6 @@
 ﻿namespace STM32F4Flasher
 {
-    partial class STM32F4Flasher
+    partial class STM32F407Flasher
     {
         /// <summary>
         ///  Required designer variable.
@@ -42,7 +42,6 @@
             comBoxComPort = new ComboBox();
             lblComPort = new Label();
             groupBox1 = new GroupBox();
-            btnJumpToBL = new Button();
             combox_ReadL = new ComboBox();
             btn_readoutL = new Button();
             checkbox_wrp11 = new CheckBox();
@@ -88,8 +87,12 @@
             btnclear = new Button();
             txtReceiveMessage = new TextBox();
             getVersion = new Button();
+            btnJumpToBL = new Button();
+            groupBoxMode = new GroupBox();
+            btnExit = new Button();
             Connection.SuspendLayout();
             groupBox1.SuspendLayout();
+            groupBoxMode.SuspendLayout();
             SuspendLayout();
             // 
             // Connection
@@ -106,9 +109,11 @@
             Connection.Controls.Add(lblBaudrate);
             Connection.Controls.Add(comBoxComPort);
             Connection.Controls.Add(lblComPort);
+            Connection.Font = new Font("Segoe UI Semibold", 9F, FontStyle.Bold, GraphicsUnit.Point, 162);
+            Connection.ForeColor = SystemColors.Desktop;
             Connection.Location = new Point(12, 18);
             Connection.Name = "Connection";
-            Connection.Size = new Size(327, 299);
+            Connection.Size = new Size(284, 299);
             Connection.TabIndex = 0;
             Connection.TabStop = false;
             Connection.Text = "Connection";
@@ -116,24 +121,25 @@
             // 
             // progressBar
             // 
-            progressBar.Location = new Point(130, 238);
+            progressBar.Location = new Point(12, 278);
             progressBar.Name = "progressBar";
-            progressBar.Size = new Size(179, 17);
+            progressBar.Size = new Size(226, 10);
             progressBar.TabIndex = 9;
             // 
             // connectionStatus
             // 
             connectionStatus.AutoSize = true;
-            connectionStatus.Location = new Point(182, 199);
+            connectionStatus.Location = new Point(12, 255);
             connectionStatus.Name = "connectionStatus";
-            connectionStatus.Size = new Size(99, 20);
+            connectionStatus.Size = new Size(101, 20);
             connectionStatus.TabIndex = 1;
             connectionStatus.Text = "Disconnected";
             connectionStatus.Click += connectionStatus_Click;
             // 
             // buttonDisconnect
             // 
-            buttonDisconnect.Location = new Point(6, 249);
+            buttonDisconnect.Font = new Font("Segoe UI Semibold", 7.8F, FontStyle.Bold);
+            buttonDisconnect.Location = new Point(144, 199);
             buttonDisconnect.Name = "buttonDisconnect";
             buttonDisconnect.Size = new Size(94, 29);
             buttonDisconnect.TabIndex = 1;
@@ -143,6 +149,7 @@
             // 
             // buttonConnect
             // 
+            buttonConnect.Font = new Font("Segoe UI Semibold", 7.8F, FontStyle.Bold);
             buttonConnect.Location = new Point(6, 199);
             buttonConnect.Name = "buttonConnect";
             buttonConnect.Size = new Size(94, 29);
@@ -166,7 +173,7 @@
             // 
             comBoxStopBits.FormattingEnabled = true;
             comBoxStopBits.Items.AddRange(new object[] { "1", "2" });
-            comBoxStopBits.Location = new Point(87, 115);
+            comBoxStopBits.Location = new Point(87, 108);
             comBoxStopBits.Name = "comBoxStopBits";
             comBoxStopBits.Size = new Size(151, 28);
             comBoxStopBits.TabIndex = 6;
@@ -178,7 +185,7 @@
             lblParity.AutoSize = true;
             lblParity.Location = new Point(12, 153);
             lblParity.Name = "lblParity";
-            lblParity.Size = new Size(45, 20);
+            lblParity.Size = new Size(49, 20);
             lblParity.TabIndex = 5;
             lblParity.Text = "Parity";
             lblParity.Click += label2_Click;
@@ -191,13 +198,14 @@
             lblStopBits.Size = new Size(68, 20);
             lblStopBits.TabIndex = 4;
             lblStopBits.Text = "Stop Bits";
+            lblStopBits.UseWaitCursor = true;
             lblStopBits.Click += label1_Click_1;
             // 
             // comBoxBaudrate
             // 
             comBoxBaudrate.FormattingEnabled = true;
             comBoxBaudrate.Items.AddRange(new object[] { "115200", "9600" });
-            comBoxBaudrate.Location = new Point(87, 68);
+            comBoxBaudrate.Location = new Point(87, 67);
             comBoxBaudrate.Name = "comBoxBaudrate";
             comBoxBaudrate.Size = new Size(151, 28);
             comBoxBaudrate.TabIndex = 3;
@@ -209,7 +217,7 @@
             lblBaudrate.AutoSize = true;
             lblBaudrate.Location = new Point(12, 71);
             lblBaudrate.Name = "lblBaudrate";
-            lblBaudrate.Size = new Size(69, 20);
+            lblBaudrate.Size = new Size(71, 20);
             lblBaudrate.TabIndex = 2;
             lblBaudrate.Text = "Baudrate";
             lblBaudrate.Click += label1_Click;
@@ -228,13 +236,12 @@
             lblComPort.AutoSize = true;
             lblComPort.Location = new Point(12, 29);
             lblComPort.Name = "lblComPort";
-            lblComPort.Size = new Size(42, 20);
+            lblComPort.Size = new Size(43, 20);
             lblComPort.TabIndex = 0;
             lblComPort.Text = "COM";
             // 
             // groupBox1
             // 
-            groupBox1.Controls.Add(btnJumpToBL);
             groupBox1.Controls.Add(combox_ReadL);
             groupBox1.Controls.Add(btn_readoutL);
             groupBox1.Controls.Add(checkbox_wrp11);
@@ -280,22 +287,13 @@
             groupBox1.Controls.Add(btnclear);
             groupBox1.Controls.Add(txtReceiveMessage);
             groupBox1.Controls.Add(getVersion);
-            groupBox1.Location = new Point(351, 18);
+            groupBox1.Font = new Font("Segoe UI Semibold", 9F, FontStyle.Bold, GraphicsUnit.Point, 162);
+            groupBox1.Location = new Point(321, 18);
             groupBox1.Name = "groupBox1";
-            groupBox1.Size = new Size(830, 559);
+            groupBox1.Size = new Size(830, 479);
             groupBox1.TabIndex = 1;
             groupBox1.TabStop = false;
             groupBox1.Text = "Commands";
-            // 
-            // btnJumpToBL
-            // 
-            btnJumpToBL.Location = new Point(27, 485);
-            btnJumpToBL.Name = "btnJumpToBL";
-            btnJumpToBL.Size = new Size(102, 29);
-            btnJumpToBL.TabIndex = 55;
-            btnJumpToBL.Text = "REBOOT";
-            btnJumpToBL.UseVisualStyleBackColor = true;
-            btnJumpToBL.Click += btnJumpToBL_Click;
             // 
             // combox_ReadL
             // 
@@ -303,12 +301,13 @@
             combox_ReadL.Items.AddRange(new object[] { "Level 0 (No Protection)", "Level 1 (Read Protection)", "Level 2 (Chip Protection - irreversible)" });
             combox_ReadL.Location = new Point(157, 437);
             combox_ReadL.Name = "combox_ReadL";
-            combox_ReadL.Size = new Size(283, 28);
+            combox_ReadL.Size = new Size(269, 28);
             combox_ReadL.TabIndex = 10;
             combox_ReadL.Text = "Level 0 (No Protection)";
             // 
             // btn_readoutL
             // 
+            btn_readoutL.Font = new Font("Segoe UI Semibold", 7.8F, FontStyle.Bold);
             btn_readoutL.Location = new Point(27, 436);
             btn_readoutL.Name = "btn_readoutL";
             btn_readoutL.Size = new Size(102, 29);
@@ -320,9 +319,9 @@
             // checkbox_wrp11
             // 
             checkbox_wrp11.AutoSize = true;
-            checkbox_wrp11.Location = new Point(628, 403);
+            checkbox_wrp11.Location = new Point(619, 404);
             checkbox_wrp11.Name = "checkbox_wrp11";
-            checkbox_wrp11.Size = new Size(78, 24);
+            checkbox_wrp11.Size = new Size(75, 24);
             checkbox_wrp11.TabIndex = 53;
             checkbox_wrp11.Text = "WRP11";
             checkbox_wrp11.UseVisualStyleBackColor = true;
@@ -330,9 +329,9 @@
             // checkbox_wrp10
             // 
             checkbox_wrp10.AutoSize = true;
-            checkbox_wrp10.Location = new Point(537, 404);
+            checkbox_wrp10.Location = new Point(529, 404);
             checkbox_wrp10.Name = "checkbox_wrp10";
-            checkbox_wrp10.Size = new Size(78, 24);
+            checkbox_wrp10.Size = new Size(77, 24);
             checkbox_wrp10.TabIndex = 52;
             checkbox_wrp10.Text = "WRP10";
             checkbox_wrp10.UseVisualStyleBackColor = true;
@@ -340,9 +339,9 @@
             // checkbox_wrp8
             // 
             checkbox_wrp8.AutoSize = true;
-            checkbox_wrp8.Location = new Point(355, 404);
+            checkbox_wrp8.Location = new Point(343, 404);
             checkbox_wrp8.Name = "checkbox_wrp8";
-            checkbox_wrp8.Size = new Size(70, 24);
+            checkbox_wrp8.Size = new Size(71, 24);
             checkbox_wrp8.TabIndex = 51;
             checkbox_wrp8.Text = "WRP8";
             checkbox_wrp8.UseVisualStyleBackColor = true;
@@ -350,9 +349,9 @@
             // checkbox_wrp9
             // 
             checkbox_wrp9.AutoSize = true;
-            checkbox_wrp9.Location = new Point(446, 404);
+            checkbox_wrp9.Location = new Point(436, 404);
             checkbox_wrp9.Name = "checkbox_wrp9";
-            checkbox_wrp9.Size = new Size(70, 24);
+            checkbox_wrp9.Size = new Size(71, 24);
             checkbox_wrp9.TabIndex = 50;
             checkbox_wrp9.Text = "WRP9";
             checkbox_wrp9.UseVisualStyleBackColor = true;
@@ -360,9 +359,9 @@
             // checkbox_wrp7
             // 
             checkbox_wrp7.AutoSize = true;
-            checkbox_wrp7.Location = new Point(264, 404);
+            checkbox_wrp7.Location = new Point(250, 404);
             checkbox_wrp7.Name = "checkbox_wrp7";
-            checkbox_wrp7.Size = new Size(70, 24);
+            checkbox_wrp7.Size = new Size(71, 24);
             checkbox_wrp7.TabIndex = 49;
             checkbox_wrp7.Text = "WRP7";
             checkbox_wrp7.UseVisualStyleBackColor = true;
@@ -372,7 +371,7 @@
             checkbox_wrp6.AutoSize = true;
             checkbox_wrp6.Location = new Point(157, 404);
             checkbox_wrp6.Name = "checkbox_wrp6";
-            checkbox_wrp6.Size = new Size(70, 24);
+            checkbox_wrp6.Size = new Size(71, 24);
             checkbox_wrp6.TabIndex = 48;
             checkbox_wrp6.Text = "WRP6";
             checkbox_wrp6.UseVisualStyleBackColor = true;
@@ -380,9 +379,9 @@
             // checkbox_wrp5
             // 
             checkbox_wrp5.AutoSize = true;
-            checkbox_wrp5.Location = new Point(628, 368);
+            checkbox_wrp5.Location = new Point(619, 373);
             checkbox_wrp5.Name = "checkbox_wrp5";
-            checkbox_wrp5.Size = new Size(70, 24);
+            checkbox_wrp5.Size = new Size(71, 24);
             checkbox_wrp5.TabIndex = 47;
             checkbox_wrp5.Text = "WRP5";
             checkbox_wrp5.UseVisualStyleBackColor = true;
@@ -390,9 +389,9 @@
             // checkbox_wrp4
             // 
             checkbox_wrp4.AutoSize = true;
-            checkbox_wrp4.Location = new Point(537, 371);
+            checkbox_wrp4.Location = new Point(529, 371);
             checkbox_wrp4.Name = "checkbox_wrp4";
-            checkbox_wrp4.Size = new Size(70, 24);
+            checkbox_wrp4.Size = new Size(72, 24);
             checkbox_wrp4.TabIndex = 46;
             checkbox_wrp4.Text = "WRP4";
             checkbox_wrp4.UseVisualStyleBackColor = true;
@@ -400,9 +399,9 @@
             // checkbox_wrp3
             // 
             checkbox_wrp3.AutoSize = true;
-            checkbox_wrp3.Location = new Point(446, 371);
+            checkbox_wrp3.Location = new Point(436, 372);
             checkbox_wrp3.Name = "checkbox_wrp3";
-            checkbox_wrp3.Size = new Size(70, 24);
+            checkbox_wrp3.Size = new Size(71, 24);
             checkbox_wrp3.TabIndex = 45;
             checkbox_wrp3.Text = "WRP3";
             checkbox_wrp3.UseVisualStyleBackColor = true;
@@ -410,9 +409,9 @@
             // checkbox_wrp2
             // 
             checkbox_wrp2.AutoSize = true;
-            checkbox_wrp2.Location = new Point(355, 372);
+            checkbox_wrp2.Location = new Point(344, 372);
             checkbox_wrp2.Name = "checkbox_wrp2";
-            checkbox_wrp2.Size = new Size(70, 24);
+            checkbox_wrp2.Size = new Size(71, 24);
             checkbox_wrp2.TabIndex = 44;
             checkbox_wrp2.Text = "WRP2";
             checkbox_wrp2.UseVisualStyleBackColor = true;
@@ -420,9 +419,9 @@
             // checkbox_wrp1
             // 
             checkbox_wrp1.AutoSize = true;
-            checkbox_wrp1.Location = new Point(264, 371);
+            checkbox_wrp1.Location = new Point(252, 371);
             checkbox_wrp1.Name = "checkbox_wrp1";
-            checkbox_wrp1.Size = new Size(70, 24);
+            checkbox_wrp1.Size = new Size(69, 24);
             checkbox_wrp1.TabIndex = 43;
             checkbox_wrp1.Text = "WRP1";
             checkbox_wrp1.UseVisualStyleBackColor = true;
@@ -432,13 +431,14 @@
             checkbox_wrp0.AutoSize = true;
             checkbox_wrp0.Location = new Point(158, 371);
             checkbox_wrp0.Name = "checkbox_wrp0";
-            checkbox_wrp0.Size = new Size(70, 24);
+            checkbox_wrp0.Size = new Size(71, 24);
             checkbox_wrp0.TabIndex = 42;
             checkbox_wrp0.Text = "WRP0";
             checkbox_wrp0.UseVisualStyleBackColor = true;
             // 
             // btn_write_p
             // 
+            btn_write_p.Font = new Font("Segoe UI Semibold", 7.8F, FontStyle.Bold);
             btn_write_p.Location = new Point(27, 368);
             btn_write_p.Name = "btn_write_p";
             btn_write_p.Size = new Size(102, 29);
@@ -464,7 +464,7 @@
             checkboxSector11.AutoSize = true;
             checkboxSector11.Location = new Point(537, 338);
             checkboxSector11.Name = "checkboxSector11";
-            checkboxSector11.Size = new Size(93, 24);
+            checkboxSector11.Size = new Size(90, 24);
             checkboxSector11.TabIndex = 39;
             checkboxSector11.Text = "Sector 11";
             checkboxSector11.UseVisualStyleBackColor = true;
@@ -472,9 +472,9 @@
             // checkboxSector10
             // 
             checkboxSector10.AutoSize = true;
-            checkboxSector10.Location = new Point(446, 334);
+            checkboxSector10.Location = new Point(446, 338);
             checkboxSector10.Name = "checkboxSector10";
-            checkboxSector10.Size = new Size(93, 24);
+            checkboxSector10.Size = new Size(92, 24);
             checkboxSector10.TabIndex = 38;
             checkboxSector10.Text = "Sector 10";
             checkboxSector10.UseVisualStyleBackColor = true;
@@ -482,9 +482,9 @@
             // checkboxSector9
             // 
             checkboxSector9.AutoSize = true;
-            checkboxSector9.Location = new Point(355, 334);
+            checkboxSector9.Location = new Point(355, 338);
             checkboxSector9.Name = "checkboxSector9";
-            checkboxSector9.Size = new Size(85, 24);
+            checkboxSector9.Size = new Size(86, 24);
             checkboxSector9.TabIndex = 37;
             checkboxSector9.Text = "Sector 9";
             checkboxSector9.UseVisualStyleBackColor = true;
@@ -492,9 +492,9 @@
             // checkboxSector8
             // 
             checkboxSector8.AutoSize = true;
-            checkboxSector8.Location = new Point(264, 334);
+            checkboxSector8.Location = new Point(264, 338);
             checkboxSector8.Name = "checkboxSector8";
-            checkboxSector8.Size = new Size(85, 24);
+            checkboxSector8.Size = new Size(86, 24);
             checkboxSector8.TabIndex = 36;
             checkboxSector8.Text = "Sector 8";
             checkboxSector8.UseVisualStyleBackColor = true;
@@ -504,7 +504,7 @@
             checkboxSector7.AutoSize = true;
             checkboxSector7.Location = new Point(157, 338);
             checkboxSector7.Name = "checkboxSector7";
-            checkboxSector7.Size = new Size(85, 24);
+            checkboxSector7.Size = new Size(86, 24);
             checkboxSector7.TabIndex = 35;
             checkboxSector7.Text = "Sector 7";
             checkboxSector7.UseVisualStyleBackColor = true;
@@ -512,9 +512,9 @@
             // checkboxSector6
             // 
             checkboxSector6.AutoSize = true;
-            checkboxSector6.Location = new Point(537, 308);
+            checkboxSector6.Location = new Point(537, 309);
             checkboxSector6.Name = "checkboxSector6";
-            checkboxSector6.Size = new Size(85, 24);
+            checkboxSector6.Size = new Size(86, 24);
             checkboxSector6.TabIndex = 34;
             checkboxSector6.Text = "Sector 6";
             checkboxSector6.UseVisualStyleBackColor = true;
@@ -522,9 +522,9 @@
             // checkboxSector5
             // 
             checkboxSector5.AutoSize = true;
-            checkboxSector5.Location = new Point(446, 303);
+            checkboxSector5.Location = new Point(446, 309);
             checkboxSector5.Name = "checkboxSector5";
-            checkboxSector5.Size = new Size(85, 24);
+            checkboxSector5.Size = new Size(86, 24);
             checkboxSector5.TabIndex = 33;
             checkboxSector5.Text = "Sector 5";
             checkboxSector5.UseVisualStyleBackColor = true;
@@ -532,9 +532,9 @@
             // checkboxSector4
             // 
             checkboxSector4.AutoSize = true;
-            checkboxSector4.Location = new Point(355, 304);
+            checkboxSector4.Location = new Point(355, 309);
             checkboxSector4.Name = "checkboxSector4";
-            checkboxSector4.Size = new Size(85, 24);
+            checkboxSector4.Size = new Size(87, 24);
             checkboxSector4.TabIndex = 32;
             checkboxSector4.Text = "Sector 4";
             checkboxSector4.UseVisualStyleBackColor = true;
@@ -542,9 +542,9 @@
             // checkboxSector3
             // 
             checkboxSector3.AutoSize = true;
-            checkboxSector3.Location = new Point(264, 307);
+            checkboxSector3.Location = new Point(264, 309);
             checkboxSector3.Name = "checkboxSector3";
-            checkboxSector3.Size = new Size(85, 24);
+            checkboxSector3.Size = new Size(86, 24);
             checkboxSector3.TabIndex = 31;
             checkboxSector3.Text = "Sector 3";
             checkboxSector3.UseVisualStyleBackColor = true;
@@ -554,14 +554,15 @@
             checkboxSector2.AutoSize = true;
             checkboxSector2.Location = new Point(157, 309);
             checkboxSector2.Name = "checkboxSector2";
-            checkboxSector2.Size = new Size(85, 24);
+            checkboxSector2.Size = new Size(86, 24);
             checkboxSector2.TabIndex = 30;
             checkboxSector2.Text = "Sector 2";
             checkboxSector2.UseVisualStyleBackColor = true;
             // 
             // btn_erase
             // 
-            btn_erase.Location = new Point(27, 304);
+            btn_erase.Font = new Font("Segoe UI Semibold", 7.8F, FontStyle.Bold);
+            btn_erase.Location = new Point(27, 318);
             btn_erase.Name = "btn_erase";
             btn_erase.Size = new Size(102, 29);
             btn_erase.TabIndex = 27;
@@ -573,11 +574,12 @@
             // 
             progbarWriteMem.Location = new Point(673, 270);
             progbarWriteMem.Name = "progbarWriteMem";
-            progbarWriteMem.Size = new Size(146, 26);
+            progbarWriteMem.Size = new Size(146, 27);
             progbarWriteMem.TabIndex = 10;
             // 
             // btnBrowse
             // 
+            btnBrowse.Font = new Font("Segoe UI Semibold", 7.8F, FontStyle.Bold);
             btnBrowse.Location = new Point(573, 268);
             btnBrowse.Name = "btnBrowse";
             btnBrowse.Size = new Size(94, 29);
@@ -604,6 +606,7 @@
             // 
             // btnWriteMem
             // 
+            btnWriteMem.Font = new Font("Segoe UI Semibold", 7.8F, FontStyle.Bold);
             btnWriteMem.Location = new Point(27, 269);
             btnWriteMem.Name = "btnWriteMem";
             btnWriteMem.Size = new Size(102, 29);
@@ -622,6 +625,7 @@
             // 
             // btn_goAddr
             // 
+            btn_goAddr.Font = new Font("Segoe UI Semibold", 7.8F, FontStyle.Bold);
             btn_goAddr.Location = new Point(27, 227);
             btn_goAddr.Name = "btn_goAddr";
             btn_goAddr.Size = new Size(102, 29);
@@ -632,6 +636,7 @@
             // 
             // btnSave
             // 
+            btnSave.Font = new Font("Segoe UI Semibold", 7.8F, FontStyle.Bold);
             btnSave.Location = new Point(728, 164);
             btnSave.Name = "btnSave";
             btnSave.Size = new Size(94, 29);
@@ -661,7 +666,7 @@
             lblLength.AutoSize = true;
             lblLength.Location = new Point(286, 164);
             lblLength.Name = "lblLength";
-            lblLength.Size = new Size(54, 20);
+            lblLength.Size = new Size(56, 20);
             lblLength.TabIndex = 17;
             lblLength.Text = "Length";
             // 
@@ -670,12 +675,13 @@
             lblAddress.AutoSize = true;
             lblAddress.Location = new Point(173, 164);
             lblAddress.Name = "lblAddress";
-            lblAddress.Size = new Size(62, 20);
+            lblAddress.Size = new Size(63, 20);
             lblAddress.TabIndex = 16;
             lblAddress.Text = "Address";
             // 
             // btnReadMem
             // 
+            btnReadMem.Font = new Font("Segoe UI Semibold", 7.8F, FontStyle.Bold);
             btnReadMem.Location = new Point(27, 185);
             btnReadMem.Name = "btnReadMem";
             btnReadMem.Size = new Size(102, 29);
@@ -686,7 +692,8 @@
             // 
             // btnGetID
             // 
-            btnGetID.Location = new Point(27, 144);
+            btnGetID.Font = new Font("Segoe UI Semibold", 7.8F, FontStyle.Bold);
+            btnGetID.Location = new Point(27, 122);
             btnGetID.Name = "btnGetID";
             btnGetID.Size = new Size(102, 29);
             btnGetID.TabIndex = 14;
@@ -696,7 +703,8 @@
             // 
             // btnGetHelp
             // 
-            btnGetHelp.Location = new Point(27, 62);
+            btnGetHelp.Font = new Font("Segoe UI Semibold", 7.8F, FontStyle.Bold);
+            btnGetHelp.Location = new Point(27, 44);
             btnGetHelp.Name = "btnGetHelp";
             btnGetHelp.Size = new Size(102, 29);
             btnGetHelp.TabIndex = 13;
@@ -706,6 +714,7 @@
             // 
             // btnclear
             // 
+            btnclear.Font = new Font("Segoe UI Semibold", 7.8F, FontStyle.Bold);
             btnclear.Location = new Point(619, 164);
             btnclear.Name = "btnclear";
             btnclear.Size = new Size(94, 29);
@@ -716,16 +725,18 @@
             // 
             // txtReceiveMessage
             // 
-            txtReceiveMessage.Location = new Point(466, 26);
+            txtReceiveMessage.Location = new Point(158, 26);
             txtReceiveMessage.Multiline = true;
             txtReceiveMessage.Name = "txtReceiveMessage";
-            txtReceiveMessage.Size = new Size(356, 125);
+            txtReceiveMessage.ScrollBars = ScrollBars.Both;
+            txtReceiveMessage.Size = new Size(664, 125);
             txtReceiveMessage.TabIndex = 11;
             txtReceiveMessage.TextChanged += txtReceiveMessage_TextChanged;
             // 
             // getVersion
             // 
-            getVersion.Location = new Point(27, 106);
+            getVersion.Font = new Font("Segoe UI Semibold", 7.8F, FontStyle.Bold);
+            getVersion.Location = new Point(27, 83);
             getVersion.Name = "getVersion";
             getVersion.Size = new Size(102, 29);
             getVersion.TabIndex = 10;
@@ -733,20 +744,56 @@
             getVersion.UseVisualStyleBackColor = true;
             getVersion.Click += getVersion_Click;
             // 
-            // STM32F4Flasher
+            // btnJumpToBL
+            // 
+            btnJumpToBL.Font = new Font("Segoe UI Semibold", 7.8F, FontStyle.Bold);
+            btnJumpToBL.Location = new Point(12, 41);
+            btnJumpToBL.Name = "btnJumpToBL";
+            btnJumpToBL.Size = new Size(102, 29);
+            btnJumpToBL.TabIndex = 55;
+            btnJumpToBL.Text = "REBOOT";
+            btnJumpToBL.UseVisualStyleBackColor = true;
+            btnJumpToBL.Click += btnJumpToBL_Click;
+            // 
+            // groupBoxMode
+            // 
+            groupBoxMode.Controls.Add(btnExit);
+            groupBoxMode.Controls.Add(btnJumpToBL);
+            groupBoxMode.Font = new Font("Segoe UI Semibold", 9F, FontStyle.Bold, GraphicsUnit.Point, 162);
+            groupBoxMode.Location = new Point(12, 327);
+            groupBoxMode.Name = "groupBoxMode";
+            groupBoxMode.Size = new Size(284, 97);
+            groupBoxMode.TabIndex = 10;
+            groupBoxMode.TabStop = false;
+            groupBoxMode.Text = "Mode";
+            // 
+            // btnExit
+            // 
+            btnExit.Font = new Font("Segoe UI Semibold", 7.8F, FontStyle.Bold);
+            btnExit.Location = new Point(144, 41);
+            btnExit.Name = "btnExit";
+            btnExit.Size = new Size(102, 29);
+            btnExit.TabIndex = 56;
+            btnExit.Text = "EXIT";
+            btnExit.UseVisualStyleBackColor = true;
+            btnExit.Click += btnExit_Click;
+            // 
+            // STM32F407Flasher
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(1193, 650);
+            ClientSize = new Size(1166, 522);
+            Controls.Add(groupBoxMode);
             Controls.Add(groupBox1);
             Controls.Add(Connection);
-            Name = "STM32F4Flasher";
+            Name = "STM32F407Flasher";
             Text = "STM32F4Flasher";
             Load += Form1_Load;
             Connection.ResumeLayout(false);
             Connection.PerformLayout();
             groupBox1.ResumeLayout(false);
             groupBox1.PerformLayout();
+            groupBoxMode.ResumeLayout(false);
             ResumeLayout(false);
         }
 
@@ -812,5 +859,7 @@
         private ComboBox combox_ReadL;
         private Button btn_readoutL;
         private Button btnJumpToBL;
+        private GroupBox groupBoxMode;
+        private Button btnExit;
     }
 }

@@ -4,13 +4,17 @@ using System.Net.Sockets;
 using System.Windows.Forms;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.ProgressBar;
+using System.Drawing; // Dosyanın en üstünde ekli olduğundan emin ol
+
 
 namespace STM32F4Flasher
 {
-    public partial class STM32F4Flasher : Form
+    public partial class STM32F407Flasher : Form
     {
+        private bool isExpectingStatusPacket = false;
+
         SerialPort serialPort1 = new SerialPort();
-        public STM32F4Flasher()
+        public STM32F407Flasher()
         {
             InitializeComponent();
         }
@@ -28,7 +32,8 @@ namespace STM32F4Flasher
             ReadoutProtect = 0x82,
             GetCheckSum = 0xA1,
             Connect = 0x62,
-            JumpToBootloader = 0x79
+            JumpToBootloader = 0x79,
+            ExitBootloader = 0x89
         }
         private void groupBox1_Enter(object sender, EventArgs e)
         {
@@ -52,12 +57,25 @@ namespace STM32F4Flasher
 
         private void Form1_Load(object sender, EventArgs e)
         {
+
             string[] ports = SerialPort.GetPortNames();
             comBoxComPort.Items.AddRange(ports);
 
             buttonConnect.Enabled = true;
             buttonDisconnect.Enabled = false;
+            groupBox1.Enabled = false;
+            btnJumpToBL.Enabled = false;
+            btnExit.Enabled = false;
 
+            Button btnRefreshCom = new Button();
+            btnRefreshCom.Name = "btnRefreshCom";
+            btnRefreshCom.Text = "↻"; // Yenileme ikonu
+            btnRefreshCom.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
+            btnRefreshCom.Size = new Size(30, 28); // Kutu boyutları
+            btnRefreshCom.Location = new Point(comBoxComPort.Right + 5, comBoxComPort.Top - 1);
+            btnRefreshCom.Click += (s, args) => RefreshComPorts();
+            Connection.Controls.Add(btnRefreshCom);
+            RefreshComPorts();
         }
 
         private void label1_Click_1(object sender, EventArgs e)
@@ -75,8 +93,14 @@ namespace STM32F4Flasher
 
         }
 
-        private void buttonConnect_Click(object sender, EventArgs e)
+        private async void buttonConnect_Click(object sender, EventArgs e)
         {
+            if (string.IsNullOrWhiteSpace(comBoxComPort.Text) || string.IsNullOrWhiteSpace(comBoxBaudrate.Text))
+            {
+                MessageBox.Show("Lütfen bağlanmadan önce geçerli bir COM Port ve Baudrate seçtiğinizden emin olun.",
+                                "Eksik Seçim", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return; // Buradan sonrasını okuma, metodu iptal et!
+            }
             serialPort1.PortName = comBoxComPort.Text;
             serialPort1.BaudRate = Int32.Parse(comBoxBaudrate.Text);
             serialPort1.Parity = comBoxParity.Text == "None" ? Parity.None :
@@ -85,10 +109,18 @@ namespace STM32F4Flasher
             serialPort1.StopBits = comBoxStopBits.Text == "1" ? StopBits.One :
                                     comBoxStopBits.Text == "1.5" ? StopBits.OnePointFive :
                                     comBoxStopBits.Text == "2" ? StopBits.Two : StopBits.One;
+
+            serialPort1.ReadTimeout = 1000;
+            serialPort1.WriteTimeout = 1000;
+
             try
             {
+                serialPort1.DataReceived -= SerialPort1_DataReceived;
                 serialPort1.DataReceived += new SerialDataReceivedEventHandler(SerialPort1_DataReceived);
+
+                // 1. PORTU AÇIYORUZ
                 serialPort1.Open();
+
                 buttonConnect.Enabled = false;
                 buttonDisconnect.Enabled = true;
                 comBoxComPort.Enabled = false;
@@ -96,22 +128,68 @@ namespace STM32F4Flasher
                 progressBar.Value = 100;
                 txtReceiveMessage.Text = string.Empty;
 
+                groupBox1.Enabled = false; // Başlangıçta komutlar kapalı
+                groupBoxMode.Enabled = true;
+                connectionStatus.Text = "Bağlanıldı. Mod Kontrol Ediliyor...";
+                connectionStatus.ForeColor = Color.Green;
+
                 List<byte> packet = new List<byte>();
                 packet.Add(0x7F);
                 packet.Add((byte)(0x02));
                 byte cmd = (byte)BootloaderCommand.Connect;
                 packet.Add((byte)(cmd));
-                byte[] crcInput = packet.Skip(1).ToArray(); // CRC is calculated on len + cmd
+                byte[] crcInput = packet.Skip(1).ToArray();
                 byte crc = CalculateCRC8(crcInput);
-                packet.Add(crc); // CRC
+                packet.Add(crc);
+
+                isExpectingStatusPacket = true;
+
+                // 2. BOOTLOADER'A "ORADA MISIN?" DİYE SORUYORUZ
                 serialPort1.Write(packet.ToArray(), 0, packet.Count);
+
+                // 500ms cevap bekle
+                await Task.Delay(500);
+
+                // 3. KARAR AŞAMASI (PORT KAPANMIYOR!)
+                if (!isExpectingStatusPacket)
+                {
+                    // ✅ CİHAZ BOOTLOADER MODUNDA (0x79 geldi)
+                    connectionStatus.Text = "Connected";
+                    connectionStatus.ForeColor = Color.Green;
+                    progressBar.Value = 100;
+                    groupBox1.Enabled = true; // Komutları kullanıma aç!
+                    btnJumpToBL.Enabled = false; // Jump to Bootloader komutu artık gereksiz, çünkü zaten bootloader modundayız
+                    btnExit.Enabled = true;
+                }
+                else
+                {
+                    // ❌ CİHAZ APPLICATION MODUNDA (Cevap gelmedi)
+                    // PORTU KAPATMIYORUZ! Sadece bayrağı indirip kullanıcıya bilgi veriyoruz.
+                    isExpectingStatusPacket = false;
+
+                    connectionStatus.Text = "Connected";
+                    connectionStatus.ForeColor = Color.Green;
+                    progressBar.Value = 0;
+                    groupBox1.Enabled = false; // Komutlar kapalı kalmaya devam ediyor
+                    btnJumpToBL.Enabled = true;
+                    btnExit.Enabled = false;
+                    // Kullanıcı bu aşamada senin yazdığın orijinal "Jump" butonuna basabilir!
+                }
             }
-            catch
+            catch (Exception ex)
             {
-                MessageBox.Show("Failed to connect to the selected COM port. Please check your settings and try again.", "Connection Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                if (serialPort1.IsOpen) serialPort1.Close();
+                isExpectingStatusPacket = false;
+
+                MessageBox.Show("Bağlantı Hatası: " + ex.Message, "Connection Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+
                 buttonConnect.Enabled = true;
                 buttonDisconnect.Enabled = false;
+                comBoxComPort.Enabled = true;
                 connectionStatus.Text = "Connection Failed";
+                connectionStatus.ForeColor = Color.Red;
+                groupBox1.Enabled = false;
+                progressBar.Value = 0;
             }
         }
 
@@ -137,6 +215,9 @@ namespace STM32F4Flasher
                 connectionStatus.Text = "Disconnected";
                 progressBar.Value = 0;
                 txtReceiveMessage.Text = string.Empty;
+
+                groupBox1.Enabled = false;
+                groupBoxMode.Enabled = false;
             }
         }
 
@@ -175,7 +256,7 @@ namespace STM32F4Flasher
                     txtReceiveMessage.ScrollToCaret();
 
                     // 2. YENİ İŞLEV: Durum Paketini yakala (0x79 + High + Low + RDP)
-                    if (buffer.Length >= 4)
+                    if (isExpectingStatusPacket && buffer.Length >= 4)
                     {
                         for (int i = 0; i <= buffer.Length - 4; i++)
                         {
@@ -216,7 +297,8 @@ namespace STM32F4Flasher
                                     combox_ReadL.SelectedIndex = 1; // Level 1
                                 }
 
-                                break; // İşlem tamam, döngüden çık
+                                isExpectingStatusPacket = false; // Durum paketini yakaladık, artık beklemeye gerek yok
+                                break;
                             }
                         }
                     }
@@ -513,7 +595,7 @@ namespace STM32F4Flasher
                 blockNum++;
 
                 int progress = (int)((double)offset / totalBytes * 100);
-                progbarWriteMem.Value = Math.Min(progress, 100);
+                progressBar.Value = Math.Min(progress, 100);
             }
 
             btnWriteMem.Enabled = true;
@@ -661,10 +743,48 @@ namespace STM32F4Flasher
 
             if (serialPort1.IsOpen)
             {
+                groupBox1.Enabled = true;
+                btnExit.Enabled = true;
+                btnJumpToBL.Enabled = false;
+                isExpectingStatusPacket = true;
                 serialPort1.Write(packet.ToArray(), 0, packet.Count);
                 serialPort1.Write("\r");
                 serialPort1.Write("\n");
             }
         }
+
+        private void btnExit_Click(object sender, EventArgs e)
+        {
+            List<byte> packet = new List<byte>();
+            packet.Add(0x7F); // Bootloader Header
+            packet.Add((byte)(0x03));
+            byte cmd = (byte)BootloaderCommand.ExitBootloader;
+            packet.Add(cmd); // Command
+
+            if (serialPort1.IsOpen)
+            {
+                groupBox1.Enabled = false;
+                btnJumpToBL.Enabled = true;
+                btnExit.Enabled = false;
+                serialPort1.Write(packet.ToArray(), 0, packet.Count);
+                serialPort1.Write("\r");
+                serialPort1.Write("\n");
+            }
+        }
+        private void RefreshComPorts()
+        {
+            comBoxComPort.Items.Clear(); // Önceki listeyi temizle
+
+            // Bilgisayara bağlı güncel COM portlarını bul
+            string[] ports = SerialPort.GetPortNames();
+            comBoxComPort.Items.AddRange(ports);
+
+            // Eğer port bulunduysa ilkini otomatik olarak seç
+            if (ports.Length > 0)
+            {
+                comBoxComPort.SelectedIndex = 0;
+            }
+        }
     }
 }
+

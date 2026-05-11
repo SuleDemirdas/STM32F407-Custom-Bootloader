@@ -27,6 +27,7 @@
 #define READOUT_PROTECT_UNPROTECT 	0x82
 #define GET_CHECKSUM				0xA1
 #define CONNECT						0x62
+#define EXIT						0x89
 
 #define ACK							0x79
 #define NACK						0x1F
@@ -41,6 +42,10 @@
 #define WRITE_MEM_BLOCK_SIZE		64
 #define MAX_NUM_OF_SECTORS			12
 #define SRAM2_END					0x2001FFFF
+
+#define APP_START_ADDRESS 	0x08008000UL
+#define APP_STACK_POINTER   *(__IO uint32_t*) APP_START_ADDRESS
+#define APP_RESET_HANDLER	*(__IO uint32_t*) (APP_START_ADDRESS + 4)
 
 // --- SEKTÖR BAŞLANGIÇ ADRESLERİ ---
 #define ADDR_FLASH_SECTOR_0     ((uint32_t)0x08000000) /* Base @ of Sector 0, 16 Kbytes */
@@ -75,5 +80,7 @@ int handleErase(char* buffer);
 void handleWriteProtectUnprotect(char* buffer);
 void handleConnect(void);
 void handleReadOutProtectUnprotect(char* buffer);
+void handleUnknownCommand(void);
+void handleExit(void);
 
 #endif /* INC_BOOTLOADER_H_ */
